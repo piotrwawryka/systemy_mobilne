@@ -398,6 +398,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
             TextView titleTV = (TextView) rowView.findViewById(R.id.title);
             titleTV.setText(task.getTitleForList());
+            ImageView imageView = (ImageView) rowView.findViewById(R.id.img);
+            imageView.setImageBitmap(task.getBitmap());
 
             CheckBox completeCB = (CheckBox) rowView.findViewById(R.id.complete);
 

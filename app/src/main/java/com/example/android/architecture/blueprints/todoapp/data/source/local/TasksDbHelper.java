@@ -29,6 +29,8 @@ public class TasksDbHelper extends SQLiteOpenHelper {
 
     private static final String BOOLEAN_TYPE = " INTEGER";
 
+    private static final String BLOB_TYPE = " BLOB";
+
     private static final String COMMA_SEP = ",";
 
     private static final String SQL_CREATE_ENTRIES =
@@ -37,7 +39,8 @@ public class TasksDbHelper extends SQLiteOpenHelper {
                     TasksPersistenceContract.TaskEntry.COLUMN_NAME_ENTRY_ID + TEXT_TYPE + COMMA_SEP +
                     TasksPersistenceContract.TaskEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
                     TasksPersistenceContract.TaskEntry.COLUMN_NAME_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
-                    TasksPersistenceContract.TaskEntry.COLUMN_NAME_COMPLETED + BOOLEAN_TYPE +
+                    TasksPersistenceContract.TaskEntry.COLUMN_NAME_COMPLETED + BOOLEAN_TYPE + COMMA_SEP +
+                    TasksPersistenceContract.TaskEntry.COLUMN_IMAGE + BLOB_TYPE +
             " )";
 
     public TasksDbHelper(Context context) {

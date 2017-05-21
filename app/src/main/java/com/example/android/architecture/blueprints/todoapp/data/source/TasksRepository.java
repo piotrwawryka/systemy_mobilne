@@ -55,6 +55,8 @@ public class TasksRepository implements TasksDataSource {
      */
     boolean mCacheIsDirty = false;
 
+    private boolean loaded = false;
+
     // Prevent direct instantiation.
     private TasksRepository(@NonNull TasksDataSource tasksRemoteDataSource,
                             @NonNull TasksDataSource tasksLocalDataSource) {
@@ -119,6 +121,7 @@ public class TasksRepository implements TasksDataSource {
                     getTasksFromRemoteDataSource(callback);
                 }
             });
+            loaded = true;
         }
     }
 
@@ -253,7 +256,9 @@ public class TasksRepository implements TasksDataSource {
 
     @Override
     public void refreshTasks() {
-        mCacheIsDirty = true;
+        if(loaded) {
+            mCacheIsDirty = true;
+        }
     }
 
     @Override

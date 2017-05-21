@@ -16,6 +16,8 @@
 
 package com.example.android.architecture.blueprints.todoapp.addedittask;
 
+import android.graphics.Bitmap;
+
 import com.example.android.architecture.blueprints.todoapp.data.Task;
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource;
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository;
@@ -31,6 +33,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -80,8 +83,9 @@ public class AddEditTaskPresenterTest {
         mAddEditTaskPresenter = new AddEditTaskPresenter(
                 null, mTasksRepository, mAddEditTaskView, true);
 
+        Bitmap bitmap = mock(Bitmap.class);
         // When the presenter is asked to save a task
-        mAddEditTaskPresenter.saveTask("New Task Title", "Some Task Description");
+        mAddEditTaskPresenter.saveTask("New Task Title", "Some Task Description", bitmap);
 
         // Then a task is saved in the repository and the view updated
         verify(mTasksRepository).saveTask(any(Task.class)); // saved to the model
@@ -95,7 +99,7 @@ public class AddEditTaskPresenterTest {
                 null, mTasksRepository, mAddEditTaskView, true);
 
         // When the presenter is asked to save an empty task
-        mAddEditTaskPresenter.saveTask("", "");
+        mAddEditTaskPresenter.saveTask("", "", null);
 
         // Then an empty not error is shown in the UI
         verify(mAddEditTaskView).showEmptyTaskError();
@@ -106,9 +110,10 @@ public class AddEditTaskPresenterTest {
         // Get a reference to the class under test
         mAddEditTaskPresenter = new AddEditTaskPresenter(
                 "1", mTasksRepository, mAddEditTaskView, true);
+        Bitmap bitmap = mock(Bitmap.class);
 
         // When the presenter is asked to save an existing task
-        mAddEditTaskPresenter.saveTask("Existing Task Title", "Some Task Description");
+        mAddEditTaskPresenter.saveTask("Existing Task Title", "Some Task Description", bitmap);
 
         // Then a task is saved in the repository and the view updated
         verify(mTasksRepository).saveTask(any(Task.class)); // saved to the model

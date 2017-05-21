@@ -269,19 +269,6 @@ public class TasksRepositoryTest {
         assertThat(mTasksRepository.mCachedTasks.containsKey(newTask.getId()), is(false));
     }
 
-    @Test
-    public void getTasksWithDirtyCache_tasksAreRetrievedFromRemote() {
-        // When calling getTasks in the repository with dirty cache
-        mTasksRepository.refreshTasks();
-        mTasksRepository.getTasks(mLoadTasksCallback);
-
-        // And the remote data source has data available
-        setTasksAvailable(mTasksRemoteDataSource, TASKS);
-
-        // Verify the tasks from the remote data source are returned, not the local
-        verify(mTasksLocalDataSource, never()).getTasks(mLoadTasksCallback);
-        verify(mLoadTasksCallback).onTasksLoaded(TASKS);
-    }
 
     @Test
     public void getTasksWithLocalDataSourceUnavailable_tasksAreRetrievedFromRemote() {
@@ -340,6 +327,12 @@ public class TasksRepositoryTest {
         mTasksRepository.getTasks(mLoadTasksCallback);
 
         // Make the remote data source return data
+        setTasksAvailable(mTasksLocalDataSource, TASKS);
+
+        mTasksRepository.refreshTasks();
+
+        mTasksRepository.getTasks(mLoadTasksCallback);
+
         setTasksAvailable(mTasksRemoteDataSource, TASKS);
 
         // Verify that the data fetched from the remote data source was saved in local.

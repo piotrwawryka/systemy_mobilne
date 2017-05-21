@@ -16,6 +16,7 @@
 
 package com.example.android.architecture.blueprints.todoapp.addedittask;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -68,9 +69,9 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter,
     }
 
     @Override
-    public void saveTask(String title, String description) {
+    public void saveTask(String title, String description, Bitmap image) {
         if (isNewTask()) {
-            createTask(title, description);
+            createTask(title, description, image);
         } else {
             updateTask(title, description);
         }
@@ -111,8 +112,9 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter,
         return mTaskId == null;
     }
 
-    private void createTask(String title, String description) {
+    private void createTask(String title, String description, Bitmap image) {
         Task newTask = new Task(title, description);
+        newTask.setBitmap(image);
         if (newTask.isEmpty()) {
             mAddTaskView.showEmptyTaskError();
         } else {

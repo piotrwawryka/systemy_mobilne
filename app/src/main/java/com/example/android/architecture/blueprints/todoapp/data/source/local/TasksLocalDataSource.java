@@ -20,12 +20,15 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 
 import com.example.android.architecture.blueprints.todoapp.data.Task;
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource;
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksPersistenceContract.TaskEntry;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +57,10 @@ public class TasksLocalDataSource implements TasksDataSource {
         return INSTANCE;
     }
 
+    private static Bitmap getImage(byte[] image) {
+        return BitmapFactory.decodeByteArray(image, 0, image.length);
+    }
+
     /**
      * Note: {@link LoadTasksCallback#onDataNotAvailable()} is fired if the database doesn't exist
      * or the table is empty.
@@ -67,7 +74,8 @@ public class TasksLocalDataSource implements TasksDataSource {
                 TaskEntry.COLUMN_NAME_ENTRY_ID,
                 TaskEntry.COLUMN_NAME_TITLE,
                 TaskEntry.COLUMN_NAME_DESCRIPTION,
-                TaskEntry.COLUMN_NAME_COMPLETED
+                TaskEntry.COLUMN_NAME_COMPLETED,
+                TaskEntry.COLUMN_IMAGE
         };
 
         Cursor c = db.query(
@@ -81,7 +89,11 @@ public class TasksLocalDataSource implements TasksDataSource {
                         c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_NAME_DESCRIPTION));
                 boolean completed =
                         c.getInt(c.getColumnIndexOrThrow(TaskEntry.COLUMN_NAME_COMPLETED)) == 1;
+                byte[] image = c.getBlob(c.getColumnIndexOrThrow(TaskEntry.COLUMN_IMAGE));
                 Task task = new Task(title, description, itemId, completed);
+                if(image != null) {
+                    task.setBitmap(getImage(image));
+                }
                 tasks.add(task);
             }
         }
@@ -112,7 +124,8 @@ public class TasksLocalDataSource implements TasksDataSource {
                 TaskEntry.COLUMN_NAME_ENTRY_ID,
                 TaskEntry.COLUMN_NAME_TITLE,
                 TaskEntry.COLUMN_NAME_DESCRIPTION,
-                TaskEntry.COLUMN_NAME_COMPLETED
+                TaskEntry.COLUMN_NAME_COMPLETED,
+                TaskEntry.COLUMN_IMAGE
         };
 
         String selection = TaskEntry.COLUMN_NAME_ENTRY_ID + " LIKE ?";
@@ -131,7 +144,11 @@ public class TasksLocalDataSource implements TasksDataSource {
                     c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_NAME_DESCRIPTION));
             boolean completed =
                     c.getInt(c.getColumnIndexOrThrow(TaskEntry.COLUMN_NAME_COMPLETED)) == 1;
+            byte[] image = c.getBlob(c.getColumnIndexOrThrow(TaskEntry.COLUMN_IMAGE));
             task = new Task(title, description, itemId, completed);
+            if(image != null) {
+                task.setBitmap(getImage(image));
+            }
         }
         if (c != null) {
             c.close();
@@ -146,6 +163,13 @@ public class TasksLocalDataSource implements TasksDataSource {
         }
     }
 
+    // convert from bitmap to byte array
+    private static byte[] getBytes(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
+        return stream.toByteArray();
+    }
+
     @Override
     public void saveTask(@NonNull Task task) {
         checkNotNull(task);
@@ -156,6 +180,9 @@ public class TasksLocalDataSource implements TasksDataSource {
         values.put(TaskEntry.COLUMN_NAME_TITLE, task.getTitle());
         values.put(TaskEntry.COLUMN_NAME_DESCRIPTION, task.getDescription());
         values.put(TaskEntry.COLUMN_NAME_COMPLETED, task.isCompleted());
+        if(task.getBitmap() != null) {
+            values.put(TaskEntry.COLUMN_IMAGE, getBytes(task.getBitmap()));
+        }
 
         db.insert(TaskEntry.TABLE_NAME, null, values);
 

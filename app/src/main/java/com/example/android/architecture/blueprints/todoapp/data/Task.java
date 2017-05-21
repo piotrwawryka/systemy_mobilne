@@ -16,6 +16,7 @@
 
 package com.example.android.architecture.blueprints.todoapp.data;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -39,6 +40,8 @@ public final class Task {
     private final String mDescription;
 
     private final boolean mCompleted;
+
+    private Bitmap bitmap;
 
     /**
      * Use this constructor to create a new active Task.
@@ -98,6 +101,14 @@ public final class Task {
     @Nullable
     public String getTitle() {
         return mTitle;
+    }
+
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
     }
 
     @Nullable

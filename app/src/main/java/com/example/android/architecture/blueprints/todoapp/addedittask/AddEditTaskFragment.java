@@ -17,15 +17,25 @@
 package com.example.android.architecture.blueprints.todoapp.addedittask;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.architecture.blueprints.todoapp.R;
@@ -38,12 +48,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class AddEditTaskFragment extends Fragment implements AddEditTaskContract.View {
 
     public static final String ARGUMENT_EDIT_TASK_ID = "EDIT_TASK_ID";
+    private static final int GALLERY_CODE = 50;
 
     private AddEditTaskContract.Presenter mPresenter;
 
     private TextView mTitle;
 
     private TextView mDescription;
+
+    private Button addImageButton;
+
+    private ImageView imageView;
+
+    private Uri imageUri;
 
     public static AddEditTaskFragment newInstance() {
         return new AddEditTaskFragment();
@@ -74,7 +91,8 @@ public class AddEditTaskFragment extends Fragment implements AddEditTaskContract
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.saveTask(mTitle.getText().toString(), mDescription.getText().toString());
+                Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+                mPresenter.saveTask(mTitle.getText().toString(), mDescription.getText().toString(), bitmap);
             }
         });
     }
@@ -87,7 +105,38 @@ public class AddEditTaskFragment extends Fragment implements AddEditTaskContract
         mTitle = (TextView) root.findViewById(R.id.add_task_title);
         mDescription = (TextView) root.findViewById(R.id.add_task_description);
         setHasOptionsMenu(true);
+        addImageButton = (Button) root.findViewById(R.id.add_image_button);
+        imageView = (ImageView) root.findViewById(R.id.flower_image);
+        addImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openGallery();
+            }
+        });
         return root;
+    }
+
+    private void openGallery() {
+
+        if (ActivityCompat.checkSelfPermission(getContext(),
+                android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                    1);
+        }
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        startActivityForResult(intent, GALLERY_CODE);
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == Activity.RESULT_OK && requestCode == GALLERY_CODE) {
+            imageUri = data.getData();
+            imageView.setVisibility(View.VISIBLE);
+            imageView.setImageURI(imageUri);
+        }
     }
 
     @Override

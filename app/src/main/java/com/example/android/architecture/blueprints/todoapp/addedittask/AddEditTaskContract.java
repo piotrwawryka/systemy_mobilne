@@ -16,6 +16,8 @@
 
 package com.example.android.architecture.blueprints.todoapp.addedittask;
 
+import android.graphics.Bitmap;
+
 import com.example.android.architecture.blueprints.todoapp.BasePresenter;
 import com.example.android.architecture.blueprints.todoapp.BaseView;
 
@@ -39,7 +41,7 @@ public interface AddEditTaskContract {
 
     interface Presenter extends BasePresenter {
 
-        void saveTask(String title, String description);
+        void saveTask(String title, String description, Bitmap image);
 
         void populateTask();
 
