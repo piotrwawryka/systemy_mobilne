@@ -73,7 +73,7 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter,
         if (isNewTask()) {
             createTask(title, description, image);
         } else {
-            updateTask(title, description);
+            updateTask(title, description, image);
         }
     }
 
@@ -123,11 +123,13 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter,
         }
     }
 
-    private void updateTask(String title, String description) {
+    private void updateTask(String title, String description, Bitmap image) {
         if (isNewTask()) {
             throw new RuntimeException("updateTask() was called but task is new.");
         }
-        mTasksRepository.saveTask(new Task(title, description, mTaskId));
+        Task task = new Task(title, description, mTaskId);
+        task.setBitmap(image);
+        mTasksRepository.saveTask(task);
         mAddTaskView.showTasksList(); // After an edit, go back to the list.
     }
 }
