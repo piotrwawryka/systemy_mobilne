@@ -165,12 +165,12 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             case R.id.menu_clear:
                 mPresenter.clearCompletedTasks();
                 break;
-            case R.id.menu_filter:
-                showFilteringPopUpMenu();
-                break;
-            case R.id.menu_refresh:
-                mPresenter.loadTasks(true);
-                break;
+//            case R.id.menu_filter:
+//                showFilteringPopUpMenu();
+//                break;
+//            case R.id.menu_refresh:
+//                mPresenter.loadTasks(true);
+//                break;
         }
         return true;
     }
