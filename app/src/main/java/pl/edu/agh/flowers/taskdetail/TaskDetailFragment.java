@@ -33,11 +33,22 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import pl.edu.agh.flowers.R;
 import pl.edu.agh.flowers.addedittask.AddEditTaskActivity;
 import pl.edu.agh.flowers.addedittask.AddEditTaskFragment;
+
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.common.base.Preconditions;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -59,6 +70,8 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
     private TextView mDetailDescription;
 
     private CheckBox mDetailCompleteStatus;
+
+    private LineChart lineChart;
 
     public static TaskDetailFragment newInstance(@Nullable String taskId) {
         Bundle arguments = new Bundle();
@@ -94,6 +107,41 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
                 mPresenter.editTask();
             }
         });
+
+        // Bind chart
+        lineChart = (LineChart) root.findViewById(R.id.chart);
+
+        // Setup helper add data button
+        FloatingActionButton addFab =
+                (FloatingActionButton) getActivity().findViewById(R.id.fab_add_task_data);
+        addFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                float value = (new Random()).nextFloat();
+                LineData data = lineChart.getData();
+                ILineDataSet set = data.getDataSetByIndex(0);
+                if (set == null) {
+                    set = new LineDataSet(null, "label");
+                    data.addDataSet(set);
+                }
+                data.addEntry(new Entry(data.getDataSetByIndex(0).getEntryCount(), value), 0);
+                data.notifyDataChanged();
+
+                lineChart.notifyDataSetChanged();
+                lineChart.invalidate();
+            }
+        });
+
+        // Populate random chart
+        Random random = new Random();
+        List<Entry> entries = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            entries.add(new Entry(i, random.nextFloat()));
+        }
+
+        LineDataSet lineDataSet = new LineDataSet(entries, "label");
+        lineChart.setData(new LineData(lineDataSet));
+        lineChart.invalidate();
 
         return root;
     }
@@ -209,5 +257,4 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
     public boolean isActive() {
         return isAdded();
     }
-
 }

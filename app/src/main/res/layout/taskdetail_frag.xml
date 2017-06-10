@@ -15,6 +15,7 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -40,11 +41,19 @@
 
     <TextView
         android:id="@+id/task_detail_description"
-        android:layout_toRightOf="@id/task_detail_complete"
-        android:layout_below="@id/task_detail_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Medium Text"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:layout_below="@+id/task_detail_title"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.5"
+        android:layout_below="@+id/task_detail_description" />
 
 </RelativeLayout>
