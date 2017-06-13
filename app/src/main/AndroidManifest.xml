@@ -45,6 +45,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="pl.edu.agh.flowers.tasks.TasksActivity" />
         </activity>
+        <service android:name=".tasks.BeaconService" />
     </application>
 
 </manifest>

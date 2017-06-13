@@ -81,6 +81,9 @@ public class TasksActivity extends AppCompatActivity {
                     (TasksFilterType) savedInstanceState.getSerializable(CURRENT_FILTERING_KEY);
             mTasksPresenter.setFiltering(currentFiltering);
         }
+
+        final Intent intent = new Intent(this, BeaconService.class);
+        startService(intent);
     }
 
     @Override
