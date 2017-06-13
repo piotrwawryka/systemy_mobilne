@@ -38,6 +38,7 @@ import android.widget.Toast;
 import pl.edu.agh.flowers.R;
 import pl.edu.agh.flowers.addedittask.AddEditTaskActivity;
 import pl.edu.agh.flowers.addedittask.AddEditTaskFragment;
+import pl.edu.agh.flowers.data.source.local.TimeDataDbHelper;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -73,6 +74,8 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
 
     private LineChart lineChart;
 
+    private TimeDataDbHelper timeDataDbHelper;
+
     public static TaskDetailFragment newInstance(@Nullable String taskId) {
         Bundle arguments = new Bundle();
         arguments.putString(ARGUMENT_TASK_ID, taskId);
@@ -96,6 +99,7 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
         mDetailTitle = (TextView) root.findViewById(R.id.task_detail_title);
         mDetailDescription = (TextView) root.findViewById(R.id.task_detail_description);
         mDetailCompleteStatus = (CheckBox) root.findViewById(R.id.task_detail_complete);
+        timeDataDbHelper = new TimeDataDbHelper(getContext());
 
         // Set up floating action button
         FloatingActionButton fab =
@@ -117,33 +121,52 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                float value = (new Random()).nextFloat();
-                LineData data = lineChart.getData();
-                ILineDataSet set = data.getDataSetByIndex(0);
-                if (set == null) {
-                    set = new LineDataSet(null, "label");
-                    data.addDataSet(set);
-                }
-                data.addEntry(new Entry(data.getDataSetByIndex(0).getEntryCount(), value), 0);
-                data.notifyDataChanged();
-
-                lineChart.notifyDataSetChanged();
-                lineChart.invalidate();
+                long timeStamp = System.currentTimeMillis();
+                double value = new Random().nextDouble();
+                addTimeDataElement(timeStamp, value);
             }
         });
 
-        // Populate random chart
-        Random random = new Random();
-        List<Entry> entries = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            entries.add(new Entry(i, random.nextFloat()));
-        }
-
-        LineDataSet lineDataSet = new LineDataSet(entries, "label");
-        lineChart.setData(new LineData(lineDataSet));
-        lineChart.invalidate();
+        loadTimeData();
 
         return root;
+    }
+
+    public void loadTimeData() {
+        List<Entry> entries =
+                timeDataDbHelper.getElements(getArguments().getString(ARGUMENT_TASK_ID));
+
+        if (entries != null && entries.size() > 0) {
+            LineDataSet lineDataSet = new LineDataSet(entries, "label");
+            lineChart.setData(new LineData(lineDataSet));
+            lineChart.invalidate();
+        }
+    }
+
+    public void addTimeDataElement(long timeStamp, double value) {
+        LineData data = lineChart.getData();
+        if (data == null) {
+            List<Entry> entries = new ArrayList<>();
+            entries.add(new Entry(0, (float) value));
+            LineDataSet lineDataSet = new LineDataSet(entries, "label");
+            lineChart.setData(new LineData(lineDataSet));
+            lineChart.invalidate();
+
+        } else {
+            ILineDataSet set = data.getDataSetByIndex(0);
+            if (set == null) {
+                set = new LineDataSet(null, "label");
+                data.addDataSet(set);
+            }
+
+            data.addEntry(new Entry(data.getEntryCount(), (float) value), 0);
+            data.notifyDataChanged();
+
+            lineChart.notifyDataSetChanged();
+            lineChart.invalidate();
+        }
+
+        timeDataDbHelper.addElement(getArguments().getString(ARGUMENT_TASK_ID), timeStamp, value);
     }
 
     @Override
