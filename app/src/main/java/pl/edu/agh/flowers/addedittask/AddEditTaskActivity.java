@@ -17,12 +17,25 @@
 package pl.edu.agh.flowers.addedittask;
 
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.test.espresso.IdlingResource;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.widget.ArrayAdapter;
+
+import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.BeaconConsumer;
+import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.BeaconParser;
+import org.altbeacon.beacon.Region;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import pl.edu.agh.flowers.data.Injection;
 import pl.edu.agh.flowers.R;
@@ -32,13 +45,19 @@ import pl.edu.agh.flowers.util.EspressoIdlingResource;
 /**
  * Displays an add or edit task screen.
  */
-public class AddEditTaskActivity extends AppCompatActivity {
+public class AddEditTaskActivity extends AppCompatActivity implements BeaconConsumer {
+
+    private static final String TAG = "AddEditTaskActivity";
 
     public static final int REQUEST_ADD_TASK = 1;
 
     public static final String SHOULD_LOAD_DATA_FROM_REPO_KEY = "SHOULD_LOAD_DATA_FROM_REPO_KEY";
 
     private AddEditTaskPresenter mAddEditTaskPresenter;
+
+    private BeaconManager beaconManager;
+    static ArrayAdapter<String> dataAdapter;
+    private Set<String> beaconIds;
 
     private ActionBar mActionBar;
 
@@ -54,6 +73,9 @@ public class AddEditTaskActivity extends AppCompatActivity {
         mActionBar.setDisplayHomeAsUpEnabled(true);
         mActionBar.setDisplayShowHomeEnabled(true);
 
+        // setup beacons
+        setupBeacons();
+
         AddEditTaskFragment addEditTaskFragment = (AddEditTaskFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.contentFrame);
 
@@ -64,11 +86,12 @@ public class AddEditTaskActivity extends AppCompatActivity {
         if (addEditTaskFragment == null) {
             addEditTaskFragment = AddEditTaskFragment.newInstance();
 
+            Bundle bundle = new Bundle();
             if (getIntent().hasExtra(AddEditTaskFragment.ARGUMENT_EDIT_TASK_ID)) {
-                Bundle bundle = new Bundle();
                 bundle.putString(AddEditTaskFragment.ARGUMENT_EDIT_TASK_ID, taskId);
-                addEditTaskFragment.setArguments(bundle);
             }
+
+            addEditTaskFragment.setArguments(bundle);
 
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
                     addEditTaskFragment, R.id.contentFrame);
@@ -87,7 +110,20 @@ public class AddEditTaskActivity extends AppCompatActivity {
                 taskId,
                 Injection.provideTasksRepository(getApplicationContext()),
                 addEditTaskFragment,
-                shouldLoadDataFromRepo);
+                shouldLoadDataFromRepo
+        );
+    }
+
+    private void setupBeacons() {
+        dataAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new ArrayList<>());
+        beaconIds = new HashSet<>();
+
+        beaconManager = BeaconManager.getInstanceForApplication(this);
+        // To detect proprietary beacons, you must add a line like below corresponding to your beacon
+        // type.  Do a web search for "setBeaconLayout" to get the proper expression.
+        beaconManager.getBeaconParsers().add(new BeaconParser().
+                setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
+        beaconManager.bind(this);
     }
 
     private void setToolbarTitle(@Nullable String taskId) {
@@ -115,4 +151,32 @@ public class AddEditTaskActivity extends AppCompatActivity {
     public IdlingResource getCountingIdlingResource() {
         return EspressoIdlingResource.getIdlingResource();
     }
+
+    @Override
+    public void onBeaconServiceConnect() {
+        beaconManager.addRangeNotifier((beacons, region) -> {
+            for (Beacon beacon : beacons) {
+                runOnUiThread(() -> {
+                    if (!beaconIds.contains(beacon.getBluetoothAddress())) {
+                        beaconIds.add(beacon.getBluetoothAddress());
+                        dataAdapter.add(beacon.getBluetoothAddress());
+                        dataAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        });
+
+        try {
+            beaconManager.startRangingBeaconsInRegion(new Region("FLOWERS_APP", null, null, null));
+        } catch (RemoteException e) {
+            Log.e(TAG, "RemoteException", e);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        beaconManager.unbind(this);
+    }
+
 }

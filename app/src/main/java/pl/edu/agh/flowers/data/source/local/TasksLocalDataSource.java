@@ -23,6 +23,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import pl.edu.agh.flowers.data.Task;
 import pl.edu.agh.flowers.data.source.TasksDataSource;
@@ -75,6 +76,7 @@ public class TasksLocalDataSource implements TasksDataSource {
                 TaskEntry.COLUMN_NAME_TITLE,
                 TaskEntry.COLUMN_NAME_DESCRIPTION,
                 TaskEntry.COLUMN_NAME_COMPLETED,
+                TaskEntry.COLUMN_BEACON_BLUETOOTH_ADDRESS,
                 TaskEntry.COLUMN_IMAGE
         };
 
@@ -89,11 +91,13 @@ public class TasksLocalDataSource implements TasksDataSource {
                         c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_NAME_DESCRIPTION));
                 boolean completed =
                         c.getInt(c.getColumnIndexOrThrow(TaskEntry.COLUMN_NAME_COMPLETED)) == 1;
+                final String beaconBluetoothAddress = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_BEACON_BLUETOOTH_ADDRESS));
                 byte[] image = c.getBlob(c.getColumnIndexOrThrow(TaskEntry.COLUMN_IMAGE));
                 Task task = new Task(title, description, itemId, completed);
                 if(image != null) {
                     task.setBitmap(getImage(image));
                 }
+                task.setBeaconBluetoothAddress(beaconBluetoothAddress);
                 tasks.add(task);
             }
         }
@@ -125,6 +129,7 @@ public class TasksLocalDataSource implements TasksDataSource {
                 TaskEntry.COLUMN_NAME_TITLE,
                 TaskEntry.COLUMN_NAME_DESCRIPTION,
                 TaskEntry.COLUMN_NAME_COMPLETED,
+                TaskEntry.COLUMN_BEACON_BLUETOOTH_ADDRESS,
                 TaskEntry.COLUMN_IMAGE
         };
 
@@ -144,11 +149,13 @@ public class TasksLocalDataSource implements TasksDataSource {
                     c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_NAME_DESCRIPTION));
             boolean completed =
                     c.getInt(c.getColumnIndexOrThrow(TaskEntry.COLUMN_NAME_COMPLETED)) == 1;
+            final String beaconBluetoothAddress = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_BEACON_BLUETOOTH_ADDRESS));
             byte[] image = c.getBlob(c.getColumnIndexOrThrow(TaskEntry.COLUMN_IMAGE));
             task = new Task(title, description, itemId, completed);
             if(image != null) {
                 task.setBitmap(getImage(image));
             }
+            task.setBeaconBluetoothAddress(beaconBluetoothAddress);
         }
         if (c != null) {
             c.close();
@@ -180,6 +187,7 @@ public class TasksLocalDataSource implements TasksDataSource {
         values.put(TaskEntry.COLUMN_NAME_TITLE, task.getTitle());
         values.put(TaskEntry.COLUMN_NAME_DESCRIPTION, task.getDescription());
         values.put(TaskEntry.COLUMN_NAME_COMPLETED, task.isCompleted());
+        values.put(TaskEntry.COLUMN_BEACON_BLUETOOTH_ADDRESS, task.getBeaconBluetoothAddress());
         if(task.getBitmap() != null) {
             values.put(TaskEntry.COLUMN_IMAGE, getBytes(task.getBitmap()));
         }

@@ -12,22 +12,9 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
-    }
 
-    buildTypes {
-        debug {
-            minifyEnabled true
-            // Uses new built-in shrinker http://tools.android.com/tech-docs/new-build-system/built-in-shrinker
-            useProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguardTest-rules.pro'
-        }
-
-        release {
-            minifyEnabled true
-            useProguard true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguardTest-rules.pro'
+        jackOptions {
+            enabled true
         }
     }
 
@@ -70,6 +57,7 @@ dependencies {
     compile "com.android.support:support-v4:$rootProject.supportLibraryVersion"
     compile "com.android.support.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
     compile "com.google.guava:guava:$rootProject.guavaVersion"
+    compile 'org.altbeacon:android-beacon-library:2.10'
     // Dependencies for local unit tests
     testCompile "junit:junit:$rootProject.ext.junitVersion"
     testCompile "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"

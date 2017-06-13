@@ -40,6 +40,7 @@ public class TasksDbHelper extends SQLiteOpenHelper {
                     TasksPersistenceContract.TaskEntry.COLUMN_NAME_TITLE + TEXT_TYPE + COMMA_SEP +
                     TasksPersistenceContract.TaskEntry.COLUMN_NAME_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
                     TasksPersistenceContract.TaskEntry.COLUMN_NAME_COMPLETED + BOOLEAN_TYPE + COMMA_SEP +
+                    TasksPersistenceContract.TaskEntry.COLUMN_BEACON_BLUETOOTH_ADDRESS + TEXT_TYPE + COMMA_SEP +
                     TasksPersistenceContract.TaskEntry.COLUMN_IMAGE + BLOB_TYPE +
             " )";
 

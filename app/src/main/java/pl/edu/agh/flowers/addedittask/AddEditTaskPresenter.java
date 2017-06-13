@@ -69,11 +69,11 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter,
     }
 
     @Override
-    public void saveTask(String title, String description, Bitmap image) {
+    public void saveTask(String title, String description, String beaconBluetoothAddress, Bitmap image) {
         if (isNewTask()) {
-            createTask(title, description, image);
+            createTask(title, description, beaconBluetoothAddress, image);
         } else {
-            updateTask(title, description, image);
+            updateTask(title, description, beaconBluetoothAddress, image);
         }
     }
 
@@ -112,9 +112,10 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter,
         return mTaskId == null;
     }
 
-    private void createTask(String title, String description, Bitmap image) {
+    private void createTask(String title, String description, String beaconBluetoothAddress, Bitmap image) {
         Task newTask = new Task(title, description);
         newTask.setBitmap(image);
+        newTask.setBeaconBluetoothAddress(beaconBluetoothAddress);
         if (newTask.isEmpty()) {
             mAddTaskView.showEmptyTaskError();
         } else {
@@ -123,12 +124,13 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter,
         }
     }
 
-    private void updateTask(String title, String description, Bitmap image) {
+    private void updateTask(String title, String description, String beaconBluetoothAddress, Bitmap image) {
         if (isNewTask()) {
             throw new RuntimeException("updateTask() was called but task is new.");
         }
         Task task = new Task(title, description, mTaskId);
         task.setBitmap(image);
+        task.setBeaconBluetoothAddress(beaconBluetoothAddress);
         mTasksRepository.saveTask(task);
         mAddTaskView.showTasksList(); // After an edit, go back to the list.
     }

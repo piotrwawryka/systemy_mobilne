@@ -33,8 +33,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import pl.edu.agh.flowers.R;
@@ -46,6 +48,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class AddEditTaskFragment extends Fragment implements AddEditTaskContract.View {
 
+    private static final String TAG = "AddEditTaskFragment";
     public static final String ARGUMENT_EDIT_TASK_ID = "EDIT_TASK_ID";
     private static final int GALLERY_CODE = 50;
 
@@ -58,6 +61,8 @@ public class AddEditTaskFragment extends Fragment implements AddEditTaskContract
     private Button addImageButton;
 
     private ImageView imageView;
+
+    private Spinner beaconSpinner;
 
     private Uri imageUri;
 
@@ -87,13 +92,19 @@ public class AddEditTaskFragment extends Fragment implements AddEditTaskContract
         FloatingActionButton fab =
                 (FloatingActionButton) getActivity().findViewById(R.id.fab_edit_task_done);
         fab.setImageResource(R.drawable.ic_done);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
-                mPresenter.saveTask(mTitle.getText().toString(), mDescription.getText().toString(), bitmap);
-            }
+        fab.setOnClickListener(v -> {
+            Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+            mPresenter.saveTask(mTitle.getText().toString(), mDescription.getText().toString(), beaconSpinner.getSelectedItem().toString(), bitmap);
         });
+
+        setupSpinner(AddEditTaskActivity.dataAdapter);
+    }
+
+    public void setupSpinner(ArrayAdapter<String> arrayAdapter) {
+        beaconSpinner = (Spinner) getActivity().findViewById(R.id.beacon_scanner);
+
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        beaconSpinner.setAdapter(arrayAdapter);
     }
 
     @Nullable
@@ -163,4 +174,5 @@ public class AddEditTaskFragment extends Fragment implements AddEditTaskContract
     public boolean isActive() {
         return isAdded();
     }
+
 }

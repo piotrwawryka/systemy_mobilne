@@ -43,6 +43,11 @@
             android:gravity="top"
             android:hint="@string/description_hint" />
 
+        <Spinner
+            android:id="@+id/beacon_scanner"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
         <Button
             android:id="@+id/add_image_button"
             android:layout_width="match_parent"

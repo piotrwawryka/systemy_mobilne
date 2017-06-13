@@ -43,6 +43,8 @@ public final class Task {
 
     private Bitmap bitmap;
 
+    private String mBeaconBluetoothAddress;
+
     /**
      * Use this constructor to create a new active Task.
      *
@@ -107,8 +109,16 @@ public final class Task {
         return bitmap;
     }
 
+    public String getBeaconBluetoothAddress() {
+        return mBeaconBluetoothAddress;
+    }
+
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
+    }
+
+    public void setBeaconBluetoothAddress(String beaconBluetoothAddress) {
+        this.mBeaconBluetoothAddress = beaconBluetoothAddress;
     }
 
     @Nullable
@@ -145,12 +155,13 @@ public final class Task {
         Task task = (Task) o;
         return Objects.equal(mId, task.mId) &&
                Objects.equal(mTitle, task.mTitle) &&
-               Objects.equal(mDescription, task.mDescription);
+               Objects.equal(mDescription, task.mDescription) &&
+               Objects.equal(mBeaconBluetoothAddress, task.mBeaconBluetoothAddress);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(mId, mTitle, mDescription);
+        return Objects.hashCode(mId, mTitle, mDescription, mBeaconBluetoothAddress);
     }
 
     @Override

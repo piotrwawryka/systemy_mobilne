@@ -41,7 +41,7 @@ public interface AddEditTaskContract {
 
     interface Presenter extends BasePresenter {
 
-        void saveTask(String title, String description, Bitmap image);
+        void saveTask(String title, String description, String beaconBluetoothAddress, Bitmap image);
 
         void populateTask();
 
