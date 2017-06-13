@@ -94,7 +94,8 @@ public class AddEditTaskFragment extends Fragment implements AddEditTaskContract
         fab.setImageResource(R.drawable.ic_done);
         fab.setOnClickListener(v -> {
             Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
-            mPresenter.saveTask(mTitle.getText().toString(), mDescription.getText().toString(), beaconSpinner.getSelectedItem().toString(), bitmap);
+            final String beaconId = beaconSpinner.getSelectedItem() != null ? beaconSpinner.getSelectedItem().toString() : null;
+            mPresenter.saveTask(mTitle.getText().toString(), mDescription.getText().toString(), beaconId, bitmap);
         });
 
         setupSpinner(AddEditTaskActivity.dataAdapter);
