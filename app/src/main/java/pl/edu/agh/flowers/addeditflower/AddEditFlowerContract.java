@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.edu.agh.flowers.addedittask;
+package pl.edu.agh.flowers.addeditflower;
 
 import android.graphics.Bitmap;
 
@@ -24,7 +24,7 @@ import pl.edu.agh.flowers.BaseView;
 /**
  * This specifies the contract between the view and the presenter.
  */
-public interface AddEditTaskContract {
+public interface AddEditFlowerContract {
 
     interface View extends BaseView<Presenter> {
 

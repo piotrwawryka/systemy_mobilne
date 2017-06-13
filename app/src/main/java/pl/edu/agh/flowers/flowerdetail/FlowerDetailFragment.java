@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.edu.agh.flowers.taskdetail;
+package pl.edu.agh.flowers.flowerdetail;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -33,11 +33,10 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import pl.edu.agh.flowers.R;
-import pl.edu.agh.flowers.addedittask.AddEditTaskActivity;
-import pl.edu.agh.flowers.addedittask.AddEditTaskFragment;
+import pl.edu.agh.flowers.addeditflower.AddEditFlowerActivity;
+import pl.edu.agh.flowers.addeditflower.AddEditFlowerFragment;
 import pl.edu.agh.flowers.data.source.local.TimeDataDbHelper;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -49,14 +48,13 @@ import com.google.common.base.Preconditions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Main UI for the task detail screen.
  */
-public class TaskDetailFragment extends Fragment implements TaskDetailContract.View {
+public class FlowerDetailFragment extends Fragment implements FlowerDetailContract.View {
 
     @NonNull
     private static final String ARGUMENT_TASK_ID = "TASK_ID";
@@ -64,7 +62,7 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
     @NonNull
     private static final int REQUEST_EDIT_TASK = 1;
 
-    private TaskDetailContract.Presenter mPresenter;
+    private FlowerDetailContract.Presenter mPresenter;
 
     private TextView mDetailTitle;
 
@@ -76,10 +74,10 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
 
     private TimeDataDbHelper timeDataDbHelper;
 
-    public static TaskDetailFragment newInstance(@Nullable String taskId) {
+    public static FlowerDetailFragment newInstance(@Nullable String taskId) {
         Bundle arguments = new Bundle();
         arguments.putString(ARGUMENT_TASK_ID, taskId);
-        TaskDetailFragment fragment = new TaskDetailFragment();
+        FlowerDetailFragment fragment = new FlowerDetailFragment();
         fragment.setArguments(arguments);
         return fragment;
     }
@@ -158,7 +156,7 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
     }
 
     @Override
-    public void setPresenter(@NonNull TaskDetailContract.Presenter presenter) {
+    public void setPresenter(@NonNull FlowerDetailContract.Presenter presenter) {
         mPresenter = checkNotNull(presenter);
     }
 
@@ -221,8 +219,8 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
 
     @Override
     public void showEditTask(@NonNull String taskId) {
-        Intent intent = new Intent(getContext(), AddEditTaskActivity.class);
-        intent.putExtra(AddEditTaskFragment.ARGUMENT_EDIT_TASK_ID, taskId);
+        Intent intent = new Intent(getContext(), AddEditFlowerActivity.class);
+        intent.putExtra(AddEditFlowerFragment.ARGUMENT_EDIT_TASK_ID, taskId);
         startActivityForResult(intent, REQUEST_EDIT_TASK);
     }
 

@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<pl.edu.agh.flowers.tasks.ScrollChildSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<pl.edu.agh.flowers.flowerslist.ScrollChildSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -82,5 +82,5 @@
 
         </LinearLayout>
     </RelativeLayout>
-</pl.edu.agh.flowers.tasks.ScrollChildSwipeRefreshLayout>
+</pl.edu.agh.flowers.flowerslist.ScrollChildSwipeRefreshLayout>
 

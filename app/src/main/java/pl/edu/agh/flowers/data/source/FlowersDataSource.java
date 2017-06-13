@@ -18,49 +18,49 @@ package pl.edu.agh.flowers.data.source;
 
 import android.support.annotation.NonNull;
 
-import pl.edu.agh.flowers.data.Task;
+import pl.edu.agh.flowers.data.Flower;
 
 import java.util.List;
 
 /**
  * Main entry point for accessing tasks data.
  * <p>
- * For simplicity, only getTasks() and getTask() have callbacks. Consider adding callbacks to other
+ * For simplicity, only getFlowers() and getFlower() have callbacks. Consider adding callbacks to other
  * methods to inform the user of network/database errors or successful operations.
  * For example, when a new task is created, it's synchronously stored in cache but usually every
  * operation on database or network should be executed in a different thread.
  */
-public interface TasksDataSource {
+public interface FlowersDataSource {
 
     interface LoadTasksCallback {
 
-        void onTasksLoaded(List<Task> tasks);
+        void onFlowersLoaded(List<Flower> tasks);
 
         void onDataNotAvailable();
     }
 
     interface GetTaskCallback {
 
-        void onTaskLoaded(Task task);
+        void onFlowerLoaded(Flower task);
 
         void onDataNotAvailable();
     }
 
-    void getTasks(@NonNull LoadTasksCallback callback);
+    void getFlowers(@NonNull LoadTasksCallback callback);
 
-    void getTask(@NonNull String taskId, @NonNull GetTaskCallback callback);
+    void getFlower(@NonNull String taskId, @NonNull GetTaskCallback callback);
 
-    void saveTask(@NonNull Task task);
+    void saveFlower(@NonNull Flower task);
 
-    void completeTask(@NonNull Task task);
+    void completeFlower(@NonNull Flower task);
 
-    void completeTask(@NonNull String taskId);
+    void completeFlower(@NonNull String taskId);
 
-    void activateTask(@NonNull Task task);
+    void activateFlower(@NonNull Flower task);
 
-    void activateTask(@NonNull String taskId);
+    void activateFlower(@NonNull String taskId);
 
-    void clearCompletedTasks();
+    void clearCompletedFlower();
 
     void refreshTasks();
 

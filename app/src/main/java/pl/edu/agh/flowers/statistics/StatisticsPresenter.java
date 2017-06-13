@@ -18,9 +18,9 @@ package pl.edu.agh.flowers.statistics;
 
 import android.support.annotation.NonNull;
 
-import pl.edu.agh.flowers.data.Task;
-import pl.edu.agh.flowers.data.source.TasksDataSource;
-import pl.edu.agh.flowers.data.source.TasksRepository;
+import pl.edu.agh.flowers.data.Flower;
+import pl.edu.agh.flowers.data.source.FlowersDataSource;
+import pl.edu.agh.flowers.data.source.FlowersRepository;
 import pl.edu.agh.flowers.util.EspressoIdlingResource;
 
 import java.util.List;
@@ -33,13 +33,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class StatisticsPresenter implements StatisticsContract.Presenter {
 
-    private final TasksRepository mTasksRepository;
+    private final FlowersRepository mFlowersRepository;
 
     private final StatisticsContract.View mStatisticsView;
 
-    public StatisticsPresenter(@NonNull TasksRepository tasksRepository,
+    public StatisticsPresenter(@NonNull FlowersRepository flowersRepository,
                                @NonNull StatisticsContract.View statisticsView) {
-        mTasksRepository = checkNotNull(tasksRepository, "tasksRepository cannot be null");
+        mFlowersRepository = checkNotNull(flowersRepository, "tasksRepository cannot be null");
         mStatisticsView = checkNotNull(statisticsView, "StatisticsView cannot be null!");
 
         mStatisticsView.setPresenter(this);
@@ -57,9 +57,9 @@ public class StatisticsPresenter implements StatisticsContract.Presenter {
         // that the app is busy until the response is handled.
         EspressoIdlingResource.increment(); // App is busy until further notice
 
-        mTasksRepository.getTasks(new TasksDataSource.LoadTasksCallback() {
+        mFlowersRepository.getFlowers(new FlowersDataSource.LoadTasksCallback() {
             @Override
-            public void onTasksLoaded(List<Task> tasks) {
+            public void onFlowersLoaded(List<Flower> tasks) {
                 int activeTasks = 0;
                 int completedTasks = 0;
 
@@ -71,7 +71,7 @@ public class StatisticsPresenter implements StatisticsContract.Presenter {
                 }
 
                 // We calculate number of active and completed tasks
-                for (Task task : tasks) {
+                for (Flower task : tasks) {
                     if (task.isCompleted()) {
                         completedTasks += 1;
                     } else {

@@ -14,36 +14,37 @@
  * limitations under the License.
  */
 
-package pl.edu.agh.flowers.taskdetail;
+package pl.edu.agh.flowers.flowerdetail;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import pl.edu.agh.flowers.data.Task;
-import pl.edu.agh.flowers.data.source.TasksDataSource;
-import pl.edu.agh.flowers.data.source.TasksRepository;
+import pl.edu.agh.flowers.data.Flower;
+import pl.edu.agh.flowers.data.source.FlowersDataSource;
+import pl.edu.agh.flowers.data.source.FlowersRepository;
+
 import com.google.common.base.Strings;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Listens to user actions from the UI ({@link TaskDetailFragment}), retrieves the data and updates
+ * Listens to user actions from the UI ({@link FlowerDetailFragment}), retrieves the data and updates
  * the UI as required.
  */
-public class TaskDetailPresenter implements TaskDetailContract.Presenter {
+public class FlowerDetailPresenter implements FlowerDetailContract.Presenter {
 
-    private final TasksRepository mTasksRepository;
+    private final FlowersRepository mFlowersRepository;
 
-    private final TaskDetailContract.View mTaskDetailView;
+    private final FlowerDetailContract.View mTaskDetailView;
 
     @Nullable
     private String mTaskId;
 
-    public TaskDetailPresenter(@Nullable String taskId,
-                               @NonNull TasksRepository tasksRepository,
-                               @NonNull TaskDetailContract.View taskDetailView) {
+    public FlowerDetailPresenter(@Nullable String taskId,
+                                 @NonNull FlowersRepository flowersRepository,
+                                 @NonNull FlowerDetailContract.View taskDetailView) {
         mTaskId = taskId;
-        mTasksRepository = checkNotNull(tasksRepository, "tasksRepository cannot be null!");
+        mFlowersRepository = checkNotNull(flowersRepository, "tasksRepository cannot be null!");
         mTaskDetailView = checkNotNull(taskDetailView, "taskDetailView cannot be null!");
 
         mTaskDetailView.setPresenter(this);
@@ -61,9 +62,9 @@ public class TaskDetailPresenter implements TaskDetailContract.Presenter {
         }
 
         mTaskDetailView.setLoadingIndicator(true);
-        mTasksRepository.getTask(mTaskId, new TasksDataSource.GetTaskCallback() {
+        mFlowersRepository.getFlower(mTaskId, new FlowersDataSource.GetTaskCallback() {
             @Override
-            public void onTaskLoaded(Task task) {
+            public void onFlowerLoaded(Flower task) {
                 // The view may not be able to handle UI updates anymore
                 if (!mTaskDetailView.isActive()) {
                     return;
@@ -102,7 +103,7 @@ public class TaskDetailPresenter implements TaskDetailContract.Presenter {
             mTaskDetailView.showMissingTask();
             return;
         }
-        mTasksRepository.deleteTask(mTaskId);
+        mFlowersRepository.deleteTask(mTaskId);
         mTaskDetailView.showTaskDeleted();
     }
 
@@ -112,7 +113,7 @@ public class TaskDetailPresenter implements TaskDetailContract.Presenter {
             mTaskDetailView.showMissingTask();
             return;
         }
-        mTasksRepository.completeTask(mTaskId);
+        mFlowersRepository.completeFlower(mTaskId);
         mTaskDetailView.showTaskMarkedComplete();
     }
 
@@ -122,11 +123,11 @@ public class TaskDetailPresenter implements TaskDetailContract.Presenter {
             mTaskDetailView.showMissingTask();
             return;
         }
-        mTasksRepository.activateTask(mTaskId);
+        mFlowersRepository.activateFlower(mTaskId);
         mTaskDetailView.showTaskMarkedActive();
     }
 
-    private void showTask(@NonNull Task task) {
+    private void showTask(@NonNull Flower task) {
         String title = task.getTitle();
         String description = task.getDescription();
 

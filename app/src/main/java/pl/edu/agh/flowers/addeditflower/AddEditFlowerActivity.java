@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.edu.agh.flowers.addedittask;
+package pl.edu.agh.flowers.addeditflower;
 
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -45,7 +45,7 @@ import pl.edu.agh.flowers.util.EspressoIdlingResource;
 /**
  * Displays an add or edit task screen.
  */
-public class AddEditTaskActivity extends AppCompatActivity implements BeaconConsumer {
+public class AddEditFlowerActivity extends AppCompatActivity implements BeaconConsumer {
 
     private static final String TAG = "AddEditTaskActivity";
 
@@ -53,7 +53,7 @@ public class AddEditTaskActivity extends AppCompatActivity implements BeaconCons
 
     public static final String SHOULD_LOAD_DATA_FROM_REPO_KEY = "SHOULD_LOAD_DATA_FROM_REPO_KEY";
 
-    private AddEditTaskPresenter mAddEditTaskPresenter;
+    private AddEditFlowerPresenter mAddEditTaskPresenter;
 
     private BeaconManager beaconManager;
     static ArrayAdapter<String> dataAdapter;
@@ -76,19 +76,19 @@ public class AddEditTaskActivity extends AppCompatActivity implements BeaconCons
         // setup beacons
         setupBeacons();
 
-        AddEditTaskFragment addEditTaskFragment = (AddEditTaskFragment) getSupportFragmentManager()
+        AddEditFlowerFragment addEditTaskFragment = (AddEditFlowerFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.contentFrame);
 
-        String taskId = getIntent().getStringExtra(AddEditTaskFragment.ARGUMENT_EDIT_TASK_ID);
+        String taskId = getIntent().getStringExtra(AddEditFlowerFragment.ARGUMENT_EDIT_TASK_ID);
 
         setToolbarTitle(taskId);
 
         if (addEditTaskFragment == null) {
-            addEditTaskFragment = AddEditTaskFragment.newInstance();
+            addEditTaskFragment = AddEditFlowerFragment.newInstance();
 
             Bundle bundle = new Bundle();
-            if (getIntent().hasExtra(AddEditTaskFragment.ARGUMENT_EDIT_TASK_ID)) {
-                bundle.putString(AddEditTaskFragment.ARGUMENT_EDIT_TASK_ID, taskId);
+            if (getIntent().hasExtra(AddEditFlowerFragment.ARGUMENT_EDIT_TASK_ID)) {
+                bundle.putString(AddEditFlowerFragment.ARGUMENT_EDIT_TASK_ID, taskId);
             }
 
             addEditTaskFragment.setArguments(bundle);
@@ -106,9 +106,9 @@ public class AddEditTaskActivity extends AppCompatActivity implements BeaconCons
         }
 
         // Create the presenter
-        mAddEditTaskPresenter = new AddEditTaskPresenter(
+        mAddEditTaskPresenter = new AddEditFlowerPresenter(
                 taskId,
-                Injection.provideTasksRepository(getApplicationContext()),
+                Injection.provideFlowersRepository(getApplicationContext()),
                 addEditTaskFragment,
                 shouldLoadDataFromRepo
         );

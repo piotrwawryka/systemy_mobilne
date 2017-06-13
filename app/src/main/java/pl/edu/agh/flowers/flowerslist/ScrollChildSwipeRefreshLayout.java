@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.edu.agh.flowers.tasks;
+package pl.edu.agh.flowers.flowerslist;
 
 import android.content.Context;
 import android.support.v4.view.ViewCompat;

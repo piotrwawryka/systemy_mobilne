@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.edu.agh.flowers.tasks;
+package pl.edu.agh.flowers.flowerslist;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,13 +35,13 @@ import pl.edu.agh.flowers.util.ActivityUtils;
 import pl.edu.agh.flowers.util.EspressoIdlingResource;
 import pl.edu.agh.flowers.util.SampleDataProvider;
 
-public class TasksActivity extends AppCompatActivity {
+public class FlowersListActivity extends AppCompatActivity {
 
     private static final String CURRENT_FILTERING_KEY = "CURRENT_FILTERING_KEY";
 
     private DrawerLayout mDrawerLayout;
 
-    private TasksPresenter mTasksPresenter;
+    private FlowersListPresenter mTasksPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,26 +63,26 @@ public class TasksActivity extends AppCompatActivity {
             setupDrawerContent(navigationView);
         }
 
-        final SampleDataProvider sampleDataProvider = new SampleDataProvider(Injection.provideTasksRepository(getApplicationContext()));
+        final SampleDataProvider sampleDataProvider = new SampleDataProvider(Injection.provideFlowersRepository(getApplicationContext()));
         sampleDataProvider.fulfillDbWith5SampleFlowers(getResources());
 
-        TasksFragment tasksFragment =
-                (TasksFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        FlowersListFragment tasksFragment =
+                (FlowersListFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         if (tasksFragment == null) {
             // Create the fragment
-            tasksFragment = TasksFragment.newInstance();
+            tasksFragment = FlowersListFragment.newInstance();
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), tasksFragment, R.id.contentFrame);
         }
 
         // Create the presenter
-        mTasksPresenter = new TasksPresenter(
-                Injection.provideTasksRepository(getApplicationContext()), tasksFragment);
+        mTasksPresenter = new FlowersListPresenter(
+                Injection.provideFlowersRepository(getApplicationContext()), tasksFragment);
 
         // Load previously saved state, if available.
         if (savedInstanceState != null) {
-            TasksFilterType currentFiltering =
-                    (TasksFilterType) savedInstanceState.getSerializable(CURRENT_FILTERING_KEY);
+            FlowersFilterType currentFiltering =
+                    (FlowersFilterType) savedInstanceState.getSerializable(CURRENT_FILTERING_KEY);
             mTasksPresenter.setFiltering(currentFiltering);
         }
 
@@ -119,7 +119,7 @@ public class TasksActivity extends AppCompatActivity {
                                 break;
                             case R.id.statistics_navigation_menu_item:
                                 Intent intent =
-                                        new Intent(TasksActivity.this, StatisticsActivity.class);
+                                        new Intent(FlowersListActivity.this, StatisticsActivity.class);
                                 startActivity(intent);
                                 break;
                             default:

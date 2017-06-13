@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.edu.agh.flowers.taskdetail;
+package pl.edu.agh.flowers.flowerdetail;
 
 import pl.edu.agh.flowers.BasePresenter;
 import pl.edu.agh.flowers.BaseView;
@@ -22,7 +22,7 @@ import pl.edu.agh.flowers.BaseView;
 /**
  * This specifies the contract between the view and the presenter.
  */
-public interface TaskDetailContract {
+public interface FlowerDetailContract {
 
     interface View extends BaseView<Presenter> {
 

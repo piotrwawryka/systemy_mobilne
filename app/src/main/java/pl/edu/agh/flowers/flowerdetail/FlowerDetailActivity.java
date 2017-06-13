@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.edu.agh.flowers.taskdetail;
+package pl.edu.agh.flowers.flowerdetail;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -28,7 +28,7 @@ import pl.edu.agh.flowers.util.ActivityUtils;
 /**
  * Displays task details screen.
  */
-public class TaskDetailActivity extends AppCompatActivity {
+public class FlowerDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_TASK_ID = "TASK_ID";
 
@@ -48,20 +48,20 @@ public class TaskDetailActivity extends AppCompatActivity {
         // Get the requested task id
         String taskId = getIntent().getStringExtra(EXTRA_TASK_ID);
 
-        TaskDetailFragment taskDetailFragment = (TaskDetailFragment) getSupportFragmentManager()
+        FlowerDetailFragment taskDetailFragment = (FlowerDetailFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.contentFrame);
 
         if (taskDetailFragment == null) {
-            taskDetailFragment = TaskDetailFragment.newInstance(taskId);
+            taskDetailFragment = FlowerDetailFragment.newInstance(taskId);
 
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
                     taskDetailFragment, R.id.contentFrame);
         }
 
         // Create the presenter
-        new TaskDetailPresenter(
+        new FlowerDetailPresenter(
                 taskId,
-                Injection.provideTasksRepository(getApplicationContext()),
+                Injection.provideFlowersRepository(getApplicationContext()),
                 taskDetailFragment);
     }
 

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package pl.edu.agh.flowers.tasks;
+package pl.edu.agh.flowers.flowerslist;
 
 import android.support.annotation.NonNull;
 
 import pl.edu.agh.flowers.BaseView;
-import pl.edu.agh.flowers.data.Task;
+import pl.edu.agh.flowers.data.Flower;
 import pl.edu.agh.flowers.BasePresenter;
 
 import java.util.List;
@@ -27,13 +27,13 @@ import java.util.List;
 /**
  * This specifies the contract between the view and the presenter.
  */
-public interface TasksContract {
+public interface FlowersListContract {
 
     interface View extends BaseView<Presenter> {
 
         void setLoadingIndicator(boolean active);
 
-        void showTasks(List<Task> tasks);
+        void showTasks(List<Flower> tasks);
 
         void showAddTask();
 
@@ -74,16 +74,16 @@ public interface TasksContract {
 
         void addNewTask();
 
-        void openTaskDetails(@NonNull Task requestedTask);
+        void openTaskDetails(@NonNull Flower requestedTask);
 
-        void completeTask(@NonNull Task completedTask);
+        void completeTask(@NonNull Flower completedTask);
 
-        void activateTask(@NonNull Task activeTask);
+        void activateTask(@NonNull Flower activeTask);
 
         void clearCompletedTasks();
 
-        void setFiltering(TasksFilterType requestType);
+        void setFiltering(FlowersFilterType requestType);
 
-        TasksFilterType getFiltering();
+        FlowersFilterType getFiltering();
     }
 }

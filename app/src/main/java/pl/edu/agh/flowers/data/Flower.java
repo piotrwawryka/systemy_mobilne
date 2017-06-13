@@ -25,10 +25,7 @@ import com.google.common.base.Strings;
 
 import java.util.UUID;
 
-/**
- * Immutable model class for a Task.
- */
-public final class Task {
+public final class Flower {
 
     @NonNull
     private final String mId;
@@ -45,55 +42,25 @@ public final class Task {
 
     private String mBeaconBluetoothAddress;
 
-    /**
-     * Use this constructor to create a new active Task.
-     *
-     * @param title       title of the task
-     * @param description description of the task
-     */
-    public Task(@Nullable String title, @Nullable String description) {
+    public Flower(@Nullable String title, @Nullable String description) {
         this(title, description, UUID.randomUUID().toString(), false);
     }
 
-    public Task(@Nullable String title, @Nullable String description, Bitmap bitmap) {
+    public Flower(@Nullable String title, @Nullable String description, Bitmap bitmap) {
         this(title, description, UUID.randomUUID().toString(), false);
         this.bitmap = bitmap;
     }
 
-    /**
-     * Use this constructor to create an active Task if the Task already has an id (copy of another
-     * Task).
-     *
-     * @param title       title of the task
-     * @param description description of the task
-     * @param id          id of the task
-     */
-    public Task(@Nullable String title, @Nullable String description, @NonNull String id) {
+    public Flower(@Nullable String title, @Nullable String description, @NonNull String id) {
         this(title, description, id, false);
     }
 
-    /**
-     * Use this constructor to create a new completed Task.
-     *
-     * @param title       title of the task
-     * @param description description of the task
-     * @param completed   true if the task is completed, false if it's active
-     */
-    public Task(@Nullable String title, @Nullable String description, boolean completed) {
+    public Flower(@Nullable String title, @Nullable String description, boolean completed) {
         this(title, description, UUID.randomUUID().toString(), completed);
     }
 
-    /**
-     * Use this constructor to specify a completed Task if the Task already has an id (copy of
-     * another Task).
-     *
-     * @param title       title of the task
-     * @param description description of the task
-     * @param id          id of the task
-     * @param completed   true if the task is completed, false if it's active
-     */
-    public Task(@Nullable String title, @Nullable String description,
-                @NonNull String id, boolean completed) {
+    public Flower(@Nullable String title, @Nullable String description,
+                  @NonNull String id, boolean completed) {
         mId = id;
         mTitle = title;
         mDescription = description;
@@ -157,7 +124,7 @@ public final class Task {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Task task = (Task) o;
+        Flower task = (Flower) o;
         return Objects.equal(mId, task.mId) &&
                Objects.equal(mTitle, task.mTitle) &&
                Objects.equal(mDescription, task.mDescription) &&

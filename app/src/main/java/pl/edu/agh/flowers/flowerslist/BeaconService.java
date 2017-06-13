@@ -1,10 +1,9 @@
-package pl.edu.agh.flowers.tasks;
+package pl.edu.agh.flowers.flowerslist;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -20,22 +19,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.edu.agh.flowers.data.Injection;
-import pl.edu.agh.flowers.data.Task;
-import pl.edu.agh.flowers.data.source.TasksDataSource;
-import pl.edu.agh.flowers.data.source.TasksRepository;
+import pl.edu.agh.flowers.data.Flower;
+import pl.edu.agh.flowers.data.source.FlowersDataSource;
+import pl.edu.agh.flowers.data.source.FlowersRepository;
 import pl.edu.agh.flowers.data.source.local.TimeDataDbHelper;
 
 public class BeaconService extends Service implements BeaconConsumer {
     private static final String TAG = "BEACON_SERVICE";
 
-    TasksRepository tasksRepository;
+    FlowersRepository flowersRepository;
     BeaconManager beaconManager;
     TimeDataDbHelper timeDataDbHelper;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        tasksRepository = Injection.provideTasksRepository(getApplicationContext());
+        flowersRepository = Injection.provideFlowersRepository(getApplicationContext());
         beaconManager = BeaconManager.getInstanceForApplication(this);
         timeDataDbHelper = new TimeDataDbHelper(getApplicationContext());
         // To detect proprietary beacons, you must add a line like below corresponding to your beacon
@@ -54,11 +53,11 @@ public class BeaconService extends Service implements BeaconConsumer {
     @Override
     public void onBeaconServiceConnect() {
         beaconManager.addRangeNotifier((beacons, region) -> {
-            tasksRepository.getTasks(new TasksDataSource.LoadTasksCallback() {
+            flowersRepository.getFlowers(new FlowersDataSource.LoadTasksCallback() {
                 @Override
-                public void onTasksLoaded(List<Task> tasks) {
+                public void onFlowersLoaded(List<Flower> tasks) {
                     for (Beacon beacon : beacons) {
-                        for (Task task : tasksFor(tasks, beacon.getBluetoothAddress())) {
+                        for (Flower task : tasksFor(tasks, beacon.getBluetoothAddress())) {
                             Log.i(TAG, "Found new value: " + beacon.getDistance() + " for flower: " + task.getId());
                             timeDataDbHelper.addElement(task.getId(), System.currentTimeMillis(), beacon.getDistance());
                         }
@@ -81,9 +80,9 @@ public class BeaconService extends Service implements BeaconConsumer {
         }
     }
 
-    private List<Task> tasksFor(List<Task> tasks, String bluetoothAddress) {
-        final ArrayList<Task> filteredTasks = new ArrayList<>();
-        for (Task task : tasks) {
+    private List<Flower> tasksFor(List<Flower> tasks, String bluetoothAddress) {
+        final ArrayList<Flower> filteredTasks = new ArrayList<>();
+        for (Flower task : tasks) {
             if (Objects.equal(task.getBeaconBluetoothAddress(), bluetoothAddress))
                 filteredTasks.add(task);
         }

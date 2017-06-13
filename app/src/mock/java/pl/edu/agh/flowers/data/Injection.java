@@ -19,23 +19,18 @@ package pl.edu.agh.flowers.data;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import pl.edu.agh.flowers.data.FakeTasksRemoteDataSource;
-import pl.edu.agh.flowers.data.source.TasksDataSource;
-import pl.edu.agh.flowers.data.source.TasksRepository;
-import pl.edu.agh.flowers.data.source.local.TasksLocalDataSource;
+import pl.edu.agh.flowers.data.source.FlowersRepository;
+import pl.edu.agh.flowers.data.source.local.FlowersLocalDataSource;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * Enables injection of mock implementations for
- * {@link TasksDataSource} at compile time. This is useful for testing, since it allows us to use
- * a fake instance of the class to isolate the dependencies and run a test hermetically.
- */
+
 public class Injection {
 
-    public static TasksRepository provideTasksRepository(@NonNull Context context) {
+    public static FlowersRepository provideFlowersRepository(@NonNull Context context) {
         checkNotNull(context);
-        return TasksRepository.getInstance(FakeTasksRemoteDataSource.getInstance(),
-                TasksLocalDataSource.getInstance(context));
+        return FlowersRepository.getInstance(FakeFlowersRemoteDataSource.getInstance(),
+                FlowersLocalDataSource.getInstance(context));
     }
+
 }

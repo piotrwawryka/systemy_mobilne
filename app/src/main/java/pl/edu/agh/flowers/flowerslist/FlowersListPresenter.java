@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package pl.edu.agh.flowers.tasks;
+package pl.edu.agh.flowers.flowerslist;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
 
-import pl.edu.agh.flowers.addedittask.AddEditTaskActivity;
-import pl.edu.agh.flowers.data.Task;
-import pl.edu.agh.flowers.data.source.TasksDataSource;
-import pl.edu.agh.flowers.data.source.TasksRepository;
+import pl.edu.agh.flowers.addeditflower.AddEditFlowerActivity;
+import pl.edu.agh.flowers.data.Flower;
+import pl.edu.agh.flowers.data.source.FlowersDataSource;
+import pl.edu.agh.flowers.data.source.FlowersRepository;
 import pl.edu.agh.flowers.util.EspressoIdlingResource;
 
 import java.util.ArrayList;
@@ -31,21 +31,21 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Listens to user actions from the UI ({@link TasksFragment}), retrieves the data and updates the
+ * Listens to user actions from the UI ({@link FlowersListFragment}), retrieves the data and updates the
  * UI as required.
  */
-public class TasksPresenter implements TasksContract.Presenter {
+public class FlowersListPresenter implements FlowersListContract.Presenter {
 
-    private final TasksRepository mTasksRepository;
+    private final FlowersRepository mFlowersRepository;
 
-    private final TasksContract.View mTasksView;
+    private final FlowersListContract.View mTasksView;
 
-    private TasksFilterType mCurrentFiltering = TasksFilterType.ALL_TASKS;
+    private FlowersFilterType mCurrentFiltering = FlowersFilterType.ALL_TASKS;
 
     private boolean mFirstLoad = true;
 
-    public TasksPresenter(@NonNull TasksRepository tasksRepository, @NonNull TasksContract.View tasksView) {
-        mTasksRepository = checkNotNull(tasksRepository, "tasksRepository cannot be null");
+    public FlowersListPresenter(@NonNull FlowersRepository flowersRepository, @NonNull FlowersListContract.View tasksView) {
+        mFlowersRepository = checkNotNull(flowersRepository, "tasksRepository cannot be null");
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
 
         mTasksView.setPresenter(this);
@@ -59,7 +59,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     @Override
     public void result(int requestCode, int resultCode) {
         // If a task was successfully added, show snackbar
-        if (AddEditTaskActivity.REQUEST_ADD_TASK == requestCode && Activity.RESULT_OK == resultCode) {
+        if (AddEditFlowerActivity.REQUEST_ADD_TASK == requestCode && Activity.RESULT_OK == resultCode) {
             mTasksView.showSuccessfullySavedMessage();
         }
     }
@@ -72,7 +72,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     /**
-     * @param forceUpdate   Pass in true to refresh the data in the {@link TasksDataSource}
+     * @param forceUpdate   Pass in true to refresh the data in the {@link FlowersDataSource}
      * @param showLoadingUI Pass in true to display a loading icon in the UI
      */
     private void loadTasks(boolean forceUpdate, final boolean showLoadingUI) {
@@ -80,17 +80,17 @@ public class TasksPresenter implements TasksContract.Presenter {
             mTasksView.setLoadingIndicator(true);
         }
         if (forceUpdate) {
-            mTasksRepository.refreshTasks();
+            mFlowersRepository.refreshTasks();
         }
 
         // The network request might be handled in a different thread so make sure Espresso knows
         // that the app is busy until the response is handled.
         EspressoIdlingResource.increment(); // App is busy until further notice
 
-        mTasksRepository.getTasks(new TasksDataSource.LoadTasksCallback() {
+        mFlowersRepository.getFlowers(new FlowersDataSource.LoadTasksCallback() {
             @Override
-            public void onTasksLoaded(List<Task> tasks) {
-                List<Task> tasksToShow = new ArrayList<Task>();
+            public void onFlowersLoaded(List<Flower> tasks) {
+                List<Flower> tasksToShow = new ArrayList<Flower>();
 
                 // This callback may be called twice, once for the cache and once for loading
                 // the data from the server API, so we check before decrementing, otherwise
@@ -100,7 +100,7 @@ public class TasksPresenter implements TasksContract.Presenter {
                 }
 
                 // We filter the tasks based on the requestType
-                for (Task task : tasks) {
+                for (Flower task : tasks) {
                     switch (mCurrentFiltering) {
                         case ALL_TASKS:
                             tasksToShow.add(task);
@@ -142,7 +142,7 @@ public class TasksPresenter implements TasksContract.Presenter {
         });
     }
 
-    private void processTasks(List<Task> tasks) {
+    private void processTasks(List<Flower> tasks) {
         if (tasks.isEmpty()) {
             // Show a message indicating there are no tasks for that filter type.
             processEmptyTasks();
@@ -188,30 +188,30 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void openTaskDetails(@NonNull Task requestedTask) {
+    public void openTaskDetails(@NonNull Flower requestedTask) {
         checkNotNull(requestedTask, "requestedTask cannot be null!");
         mTasksView.showTaskDetailsUi(requestedTask.getId());
     }
 
     @Override
-    public void completeTask(@NonNull Task completedTask) {
+    public void completeTask(@NonNull Flower completedTask) {
         checkNotNull(completedTask, "completedTask cannot be null!");
-        mTasksRepository.completeTask(completedTask);
+        mFlowersRepository.completeFlower(completedTask);
         mTasksView.showTaskMarkedComplete();
         loadTasks(false, false);
     }
 
     @Override
-    public void activateTask(@NonNull Task activeTask) {
+    public void activateTask(@NonNull Flower activeTask) {
         checkNotNull(activeTask, "activeTask cannot be null!");
-        mTasksRepository.activateTask(activeTask);
+        mFlowersRepository.activateFlower(activeTask);
         mTasksView.showTaskMarkedActive();
         loadTasks(false, false);
     }
 
     @Override
     public void clearCompletedTasks() {
-        mTasksRepository.clearCompletedTasks();
+        mFlowersRepository.clearCompletedFlower();
         mTasksView.showCompletedTasksCleared();
         loadTasks(false, false);
     }
@@ -219,17 +219,17 @@ public class TasksPresenter implements TasksContract.Presenter {
     /**
      * Sets the current task filtering type.
      *
-     * @param requestType Can be {@link TasksFilterType#ALL_TASKS},
-     *                    {@link TasksFilterType#COMPLETED_TASKS}, or
-     *                    {@link TasksFilterType#ACTIVE_TASKS}
+     * @param requestType Can be {@link FlowersFilterType#ALL_TASKS},
+     *                    {@link FlowersFilterType#COMPLETED_TASKS}, or
+     *                    {@link FlowersFilterType#ACTIVE_TASKS}
      */
     @Override
-    public void setFiltering(TasksFilterType requestType) {
+    public void setFiltering(FlowersFilterType requestType) {
         mCurrentFiltering = requestType;
     }
 
     @Override
-    public TasksFilterType getFiltering() {
+    public FlowersFilterType getFiltering() {
         return mCurrentFiltering;
     }
 

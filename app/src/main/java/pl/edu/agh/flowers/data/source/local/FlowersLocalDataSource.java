@@ -23,11 +23,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
-import pl.edu.agh.flowers.data.Task;
-import pl.edu.agh.flowers.data.source.TasksDataSource;
-import pl.edu.agh.flowers.data.source.local.TasksPersistenceContract.TaskEntry;
+import pl.edu.agh.flowers.data.Flower;
+import pl.edu.agh.flowers.data.source.FlowersDataSource;
+import pl.edu.agh.flowers.data.source.local.FlowersPersistenceContract.TaskEntry;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -39,21 +38,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Concrete implementation of a data source as a db.
  */
-public class TasksLocalDataSource implements TasksDataSource {
+public class FlowersLocalDataSource implements FlowersDataSource {
 
-    private static TasksLocalDataSource INSTANCE;
+    private static FlowersLocalDataSource INSTANCE;
 
-    private TasksDbHelper mDbHelper;
+    private FlowersDbHelper mDbHelper;
 
     // Prevent direct instantiation.
-    private TasksLocalDataSource(@NonNull Context context) {
+    private FlowersLocalDataSource(@NonNull Context context) {
         checkNotNull(context);
-        mDbHelper = new TasksDbHelper(context);
+        mDbHelper = new FlowersDbHelper(context);
     }
 
-    public static TasksLocalDataSource getInstance(@NonNull Context context) {
+    public static FlowersLocalDataSource getInstance(@NonNull Context context) {
         if (INSTANCE == null) {
-            INSTANCE = new TasksLocalDataSource(context);
+            INSTANCE = new FlowersLocalDataSource(context);
         }
         return INSTANCE;
     }
@@ -67,8 +66,8 @@ public class TasksLocalDataSource implements TasksDataSource {
      * or the table is empty.
      */
     @Override
-    public void getTasks(@NonNull LoadTasksCallback callback) {
-        List<Task> tasks = new ArrayList<Task>();
+    public void getFlowers(@NonNull LoadTasksCallback callback) {
+        List<Flower> tasks = new ArrayList<Flower>();
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         String[] projection = {
@@ -93,7 +92,7 @@ public class TasksLocalDataSource implements TasksDataSource {
                         c.getInt(c.getColumnIndexOrThrow(TaskEntry.COLUMN_NAME_COMPLETED)) == 1;
                 final String beaconBluetoothAddress = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_BEACON_BLUETOOTH_ADDRESS));
                 byte[] image = c.getBlob(c.getColumnIndexOrThrow(TaskEntry.COLUMN_IMAGE));
-                Task task = new Task(title, description, itemId, completed);
+                Flower task = new Flower(title, description, itemId, completed);
                 if(image != null) {
                     task.setBitmap(getImage(image));
                 }
@@ -111,17 +110,17 @@ public class TasksLocalDataSource implements TasksDataSource {
             // This will be called if the table is new or just empty.
             callback.onDataNotAvailable();
         } else {
-            callback.onTasksLoaded(tasks);
+            callback.onFlowersLoaded(tasks);
         }
 
     }
 
     /**
-     * Note: {@link GetTaskCallback#onDataNotAvailable()} is fired if the {@link Task} isn't
+     * Note: {@link GetTaskCallback#onDataNotAvailable()} is fired if the {@link Flower} isn't
      * found.
      */
     @Override
-    public void getTask(@NonNull String taskId, @NonNull GetTaskCallback callback) {
+    public void getFlower(@NonNull String taskId, @NonNull GetTaskCallback callback) {
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         String[] projection = {
@@ -139,7 +138,7 @@ public class TasksLocalDataSource implements TasksDataSource {
         Cursor c = db.query(
                 TaskEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
 
-        Task task = null;
+        Flower task = null;
 
         if (c != null && c.getCount() > 0) {
             c.moveToFirst();
@@ -151,7 +150,7 @@ public class TasksLocalDataSource implements TasksDataSource {
                     c.getInt(c.getColumnIndexOrThrow(TaskEntry.COLUMN_NAME_COMPLETED)) == 1;
             final String beaconBluetoothAddress = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_BEACON_BLUETOOTH_ADDRESS));
             byte[] image = c.getBlob(c.getColumnIndexOrThrow(TaskEntry.COLUMN_IMAGE));
-            task = new Task(title, description, itemId, completed);
+            task = new Flower(title, description, itemId, completed);
             if(image != null) {
                 task.setBitmap(getImage(image));
             }
@@ -164,7 +163,7 @@ public class TasksLocalDataSource implements TasksDataSource {
         db.close();
 
         if (task != null) {
-            callback.onTaskLoaded(task);
+            callback.onFlowerLoaded(task);
         } else {
             callback.onDataNotAvailable();
         }
@@ -178,7 +177,7 @@ public class TasksLocalDataSource implements TasksDataSource {
     }
 
     @Override
-    public void saveTask(@NonNull Task task) {
+    public void saveFlower(@NonNull Flower task) {
         checkNotNull(task);
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
@@ -198,7 +197,7 @@ public class TasksLocalDataSource implements TasksDataSource {
     }
 
     @Override
-    public void completeTask(@NonNull Task task) {
+    public void completeFlower(@NonNull Flower task) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -213,13 +212,13 @@ public class TasksLocalDataSource implements TasksDataSource {
     }
 
     @Override
-    public void completeTask(@NonNull String taskId) {
+    public void completeFlower(@NonNull String taskId) {
         // Not required for the local data source because the {@link TasksRepository} handles
         // converting from a {@code taskId} to a {@link task} using its cached data.
     }
 
     @Override
-    public void activateTask(@NonNull Task task) {
+    public void activateFlower(@NonNull Flower task) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -234,13 +233,13 @@ public class TasksLocalDataSource implements TasksDataSource {
     }
 
     @Override
-    public void activateTask(@NonNull String taskId) {
+    public void activateFlower(@NonNull String taskId) {
         // Not required for the local data source because the {@link TasksRepository} handles
         // converting from a {@code taskId} to a {@link task} using its cached data.
     }
 
     @Override
-    public void clearCompletedTasks() {
+    public void clearCompletedFlower() {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         String selection = TaskEntry.COLUMN_NAME_COMPLETED + " LIKE ?";

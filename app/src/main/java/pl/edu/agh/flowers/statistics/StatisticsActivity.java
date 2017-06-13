@@ -68,7 +68,7 @@ public class StatisticsActivity extends AppCompatActivity {
         }
 
         new StatisticsPresenter(
-                Injection.provideTasksRepository(getApplicationContext()), statisticsFragment);
+                Injection.provideFlowersRepository(getApplicationContext()), statisticsFragment);
     }
 
     @Override

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.edu.agh.flowers.addedittask;
+package pl.edu.agh.flowers.addeditflower;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -46,13 +46,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Main UI for the add task screen. Users can enter a task title and description.
  */
-public class AddEditTaskFragment extends Fragment implements AddEditTaskContract.View {
+public class AddEditFlowerFragment extends Fragment implements AddEditFlowerContract.View {
 
     private static final String TAG = "AddEditTaskFragment";
     public static final String ARGUMENT_EDIT_TASK_ID = "EDIT_TASK_ID";
     private static final int GALLERY_CODE = 50;
 
-    private AddEditTaskContract.Presenter mPresenter;
+    private AddEditFlowerContract.Presenter mPresenter;
 
     private TextView mTitle;
 
@@ -66,11 +66,11 @@ public class AddEditTaskFragment extends Fragment implements AddEditTaskContract
 
     private Uri imageUri;
 
-    public static AddEditTaskFragment newInstance() {
-        return new AddEditTaskFragment();
+    public static AddEditFlowerFragment newInstance() {
+        return new AddEditFlowerFragment();
     }
 
-    public AddEditTaskFragment() {
+    public AddEditFlowerFragment() {
         // Required empty public constructor
     }
 
@@ -81,7 +81,7 @@ public class AddEditTaskFragment extends Fragment implements AddEditTaskContract
     }
 
     @Override
-    public void setPresenter(@NonNull AddEditTaskContract.Presenter presenter) {
+    public void setPresenter(@NonNull AddEditFlowerContract.Presenter presenter) {
         mPresenter = checkNotNull(presenter);
     }
 
@@ -98,7 +98,7 @@ public class AddEditTaskFragment extends Fragment implements AddEditTaskContract
             mPresenter.saveTask(mTitle.getText().toString(), mDescription.getText().toString(), beaconId, bitmap);
         });
 
-        setupSpinner(AddEditTaskActivity.dataAdapter);
+        setupSpinner(AddEditFlowerActivity.dataAdapter);
     }
 
     public void setupSpinner(ArrayAdapter<String> arrayAdapter) {

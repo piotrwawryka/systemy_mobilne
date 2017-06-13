@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package pl.edu.agh.flowers.tasks;
+package pl.edu.agh.flowers.flowerslist;
 
 /**
  * Used with the filter spinner in the tasks list.
  */
-public enum TasksFilterType {
+public enum FlowersFilterType {
     /**
      * Do not filter tasks.
      */

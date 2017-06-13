@@ -21,7 +21,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import pl.edu.agh.flowers.data.Task;
+import pl.edu.agh.flowers.data.Flower;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -36,18 +36,18 @@ import java.util.Map;
  * obtained from the server, by using the remote data source only if the local database doesn't
  * exist or is empty.
  */
-public class TasksRepository implements TasksDataSource {
+public class FlowersRepository implements FlowersDataSource {
 
-    private static TasksRepository INSTANCE = null;
+    private static FlowersRepository INSTANCE = null;
 
-    private final TasksDataSource mTasksRemoteDataSource;
+    private final FlowersDataSource mTasksRemoteDataSource;
 
-    private final TasksDataSource mTasksLocalDataSource;
+    private final FlowersDataSource mTasksLocalDataSource;
 
     /**
      * This variable has package local visibility so it can be accessed from tests.
      */
-    Map<String, Task> mCachedTasks;
+    Map<String, Flower> mCachedTasks;
 
     /**
      * Marks the cache as invalid, to force an update the next time data is requested. This variable
@@ -58,8 +58,8 @@ public class TasksRepository implements TasksDataSource {
     private boolean loaded = false;
 
     // Prevent direct instantiation.
-    private TasksRepository(@NonNull TasksDataSource tasksRemoteDataSource,
-                            @NonNull TasksDataSource tasksLocalDataSource) {
+    private FlowersRepository(@NonNull FlowersDataSource tasksRemoteDataSource,
+                              @NonNull FlowersDataSource tasksLocalDataSource) {
         mTasksRemoteDataSource = checkNotNull(tasksRemoteDataSource);
         mTasksLocalDataSource = checkNotNull(tasksLocalDataSource);
     }
@@ -69,18 +69,18 @@ public class TasksRepository implements TasksDataSource {
      *
      * @param tasksRemoteDataSource the backend data source
      * @param tasksLocalDataSource  the device storage data source
-     * @return the {@link TasksRepository} instance
+     * @return the {@link FlowersRepository} instance
      */
-    public static TasksRepository getInstance(TasksDataSource tasksRemoteDataSource,
-                                              TasksDataSource tasksLocalDataSource) {
+    public static FlowersRepository getInstance(FlowersDataSource tasksRemoteDataSource,
+                                                FlowersDataSource tasksLocalDataSource) {
         if (INSTANCE == null) {
-            INSTANCE = new TasksRepository(tasksRemoteDataSource, tasksLocalDataSource);
+            INSTANCE = new FlowersRepository(tasksRemoteDataSource, tasksLocalDataSource);
         }
         return INSTANCE;
     }
 
     /**
-     * Used to force {@link #getInstance(TasksDataSource, TasksDataSource)} to create a new instance
+     * Used to force {@link #getInstance(FlowersDataSource, FlowersDataSource)} to create a new instance
      * next time it's called.
      */
     public static void destroyInstance() {
@@ -95,12 +95,12 @@ public class TasksRepository implements TasksDataSource {
      * get the data.
      */
     @Override
-    public void getTasks(@NonNull final LoadTasksCallback callback) {
+    public void getFlowers(@NonNull final LoadTasksCallback callback) {
         checkNotNull(callback);
 
         // Respond immediately with cache if available and not dirty
         if (mCachedTasks != null && !mCacheIsDirty) {
-            callback.onTasksLoaded(new ArrayList<>(mCachedTasks.values()));
+            callback.onFlowersLoaded(new ArrayList<>(mCachedTasks.values()));
             return;
         }
 
@@ -109,11 +109,11 @@ public class TasksRepository implements TasksDataSource {
             getTasksFromRemoteDataSource(callback);
         } else {
             // Query the local storage if available. If not, query the network.
-            mTasksLocalDataSource.getTasks(new LoadTasksCallback() {
+            mTasksLocalDataSource.getFlowers(new LoadTasksCallback() {
                 @Override
-                public void onTasksLoaded(List<Task> tasks) {
+                public void onFlowersLoaded(List<Flower> tasks) {
                     refreshCache(tasks);
-                    callback.onTasksLoaded(new ArrayList<>(mCachedTasks.values()));
+                    callback.onFlowersLoaded(new ArrayList<>(mCachedTasks.values()));
                 }
 
                 @Override
@@ -126,10 +126,10 @@ public class TasksRepository implements TasksDataSource {
     }
 
     @Override
-    public void saveTask(@NonNull Task task) {
+    public void saveFlower(@NonNull Flower task) {
         checkNotNull(task);
-        mTasksRemoteDataSource.saveTask(task);
-        mTasksLocalDataSource.saveTask(task);
+        mTasksRemoteDataSource.saveFlower(task);
+        mTasksLocalDataSource.saveFlower(task);
 
         // Do in memory cache update to keep the app UI up to date
         if (mCachedTasks == null) {
@@ -139,12 +139,12 @@ public class TasksRepository implements TasksDataSource {
     }
 
     @Override
-    public void completeTask(@NonNull Task task) {
+    public void completeFlower(@NonNull Flower task) {
         checkNotNull(task);
-        mTasksRemoteDataSource.completeTask(task);
-        mTasksLocalDataSource.completeTask(task);
+        mTasksRemoteDataSource.completeFlower(task);
+        mTasksLocalDataSource.completeFlower(task);
 
-        Task completedTask = new Task(task.getTitle(), task.getDescription(), task.getId(), true);
+        Flower completedTask = new Flower(task.getTitle(), task.getDescription(), task.getId(), true);
         completedTask.setBitmap(task.getBitmap());
 
         // Do in memory cache update to keep the app UI up to date
@@ -155,18 +155,18 @@ public class TasksRepository implements TasksDataSource {
     }
 
     @Override
-    public void completeTask(@NonNull String taskId) {
+    public void completeFlower(@NonNull String taskId) {
         checkNotNull(taskId);
-        completeTask(getTaskWithId(taskId));
+        completeFlower(getTaskWithId(taskId));
     }
 
     @Override
-    public void activateTask(@NonNull Task task) {
+    public void activateFlower(@NonNull Flower task) {
         checkNotNull(task);
-        mTasksRemoteDataSource.activateTask(task);
-        mTasksLocalDataSource.activateTask(task);
+        mTasksRemoteDataSource.activateFlower(task);
+        mTasksLocalDataSource.activateFlower(task);
 
-        Task activeTask = new Task(task.getTitle(), task.getDescription(), task.getId());
+        Flower activeTask = new Flower(task.getTitle(), task.getDescription(), task.getId());
         activeTask.setBitmap(task.getBitmap());
 
         // Do in memory cache update to keep the app UI up to date
@@ -177,23 +177,23 @@ public class TasksRepository implements TasksDataSource {
     }
 
     @Override
-    public void activateTask(@NonNull String taskId) {
+    public void activateFlower(@NonNull String taskId) {
         checkNotNull(taskId);
-        activateTask(getTaskWithId(taskId));
+        activateFlower(getTaskWithId(taskId));
     }
 
     @Override
-    public void clearCompletedTasks() {
-        mTasksRemoteDataSource.clearCompletedTasks();
-        mTasksLocalDataSource.clearCompletedTasks();
+    public void clearCompletedFlower() {
+        mTasksRemoteDataSource.clearCompletedFlower();
+        mTasksLocalDataSource.clearCompletedFlower();
 
         // Do in memory cache update to keep the app UI up to date
         if (mCachedTasks == null) {
             mCachedTasks = new LinkedHashMap<>();
         }
-        Iterator<Map.Entry<String, Task>> it = mCachedTasks.entrySet().iterator();
+        Iterator<Map.Entry<String, Flower>> it = mCachedTasks.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry<String, Task> entry = it.next();
+            Map.Entry<String, Flower> entry = it.next();
             if (entry.getValue().isCompleted()) {
                 it.remove();
             }
@@ -208,43 +208,43 @@ public class TasksRepository implements TasksDataSource {
      * get the data.
      */
     @Override
-    public void getTask(@NonNull final String taskId, @NonNull final GetTaskCallback callback) {
+    public void getFlower(@NonNull final String taskId, @NonNull final GetTaskCallback callback) {
         checkNotNull(taskId);
         checkNotNull(callback);
 
-        Task cachedTask = getTaskWithId(taskId);
+        Flower cachedTask = getTaskWithId(taskId);
 
         // Respond immediately with cache if available
         if (cachedTask != null) {
-            callback.onTaskLoaded(cachedTask);
+            callback.onFlowerLoaded(cachedTask);
             return;
         }
 
         // Load from server/persisted if needed.
 
         // Is the task in the local data source? If not, query the network.
-        mTasksLocalDataSource.getTask(taskId, new GetTaskCallback() {
+        mTasksLocalDataSource.getFlower(taskId, new GetTaskCallback() {
             @Override
-            public void onTaskLoaded(Task task) {
+            public void onFlowerLoaded(Flower task) {
                 // Do in memory cache update to keep the app UI up to date
                 if (mCachedTasks == null) {
                     mCachedTasks = new LinkedHashMap<>();
                 }
                 mCachedTasks.put(task.getId(), task);
-                callback.onTaskLoaded(task);
+                callback.onFlowerLoaded(task);
             }
 
             @Override
             public void onDataNotAvailable() {
-                mTasksRemoteDataSource.getTask(taskId, new GetTaskCallback() {
+                mTasksRemoteDataSource.getFlower(taskId, new GetTaskCallback() {
                     @Override
-                    public void onTaskLoaded(Task task) {
+                    public void onFlowerLoaded(Flower task) {
                         // Do in memory cache update to keep the app UI up to date
                         if (mCachedTasks == null) {
                             mCachedTasks = new LinkedHashMap<>();
                         }
                         mCachedTasks.put(task.getId(), task);
-                        callback.onTaskLoaded(task);
+                        callback.onFlowerLoaded(task);
                     }
 
                     @Override
@@ -283,12 +283,12 @@ public class TasksRepository implements TasksDataSource {
     }
 
     private void getTasksFromRemoteDataSource(@NonNull final LoadTasksCallback callback) {
-        mTasksRemoteDataSource.getTasks(new LoadTasksCallback() {
+        mTasksRemoteDataSource.getFlowers(new LoadTasksCallback() {
             @Override
-            public void onTasksLoaded(List<Task> tasks) {
+            public void onFlowersLoaded(List<Flower> tasks) {
                 refreshCache(tasks);
                 refreshLocalDataSource(tasks);
-                callback.onTasksLoaded(new ArrayList<>(mCachedTasks.values()));
+                callback.onFlowersLoaded(new ArrayList<>(mCachedTasks.values()));
             }
 
             @Override
@@ -298,26 +298,26 @@ public class TasksRepository implements TasksDataSource {
         });
     }
 
-    private void refreshCache(List<Task> tasks) {
+    private void refreshCache(List<Flower> tasks) {
         if (mCachedTasks == null) {
             mCachedTasks = new LinkedHashMap<>();
         }
         mCachedTasks.clear();
-        for (Task task : tasks) {
+        for (Flower task : tasks) {
             mCachedTasks.put(task.getId(), task);
         }
         mCacheIsDirty = false;
     }
 
-    private void refreshLocalDataSource(List<Task> tasks) {
+    private void refreshLocalDataSource(List<Flower> tasks) {
         mTasksLocalDataSource.deleteAllTasks();
-        for (Task task : tasks) {
-            mTasksLocalDataSource.saveTask(task);
+        for (Flower task : tasks) {
+            mTasksLocalDataSource.saveFlower(task);
         }
     }
 
     @Nullable
-    private Task getTaskWithId(@NonNull String id) {
+    private Flower getTaskWithId(@NonNull String id) {
         checkNotNull(id);
         if (mCachedTasks == null || mCachedTasks.isEmpty()) {
             return null;

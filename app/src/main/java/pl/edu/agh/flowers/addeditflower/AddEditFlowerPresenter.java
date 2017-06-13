@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 
-package pl.edu.agh.flowers.addedittask;
+package pl.edu.agh.flowers.addeditflower;
 
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import pl.edu.agh.flowers.data.Task;
-import pl.edu.agh.flowers.data.source.TasksDataSource;
+import pl.edu.agh.flowers.data.Flower;
+import pl.edu.agh.flowers.data.source.FlowersDataSource;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Listens to user actions from the UI ({@link AddEditTaskFragment}), retrieves the data and updates
+ * Listens to user actions from the UI ({@link AddEditFlowerFragment}), retrieves the data and updates
  * the UI as required.
  */
-public class AddEditTaskPresenter implements AddEditTaskContract.Presenter,
-        TasksDataSource.GetTaskCallback {
+public class AddEditFlowerPresenter implements AddEditFlowerContract.Presenter,
+        FlowersDataSource.GetTaskCallback {
 
     @NonNull
-    private final TasksDataSource mTasksRepository;
+    private final FlowersDataSource mTasksRepository;
 
     @NonNull
-    private final AddEditTaskContract.View mAddTaskView;
+    private final AddEditFlowerContract.View mAddTaskView;
 
     @Nullable
     private String mTaskId;
@@ -51,8 +51,8 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter,
      * @param addTaskView the add/edit view
      * @param shouldLoadDataFromRepo whether data needs to be loaded or not (for config changes)
      */
-    public AddEditTaskPresenter(@Nullable String taskId, @NonNull TasksDataSource tasksRepository,
-            @NonNull AddEditTaskContract.View addTaskView, boolean shouldLoadDataFromRepo) {
+    public AddEditFlowerPresenter(@Nullable String taskId, @NonNull FlowersDataSource tasksRepository,
+                                  @NonNull AddEditFlowerContract.View addTaskView, boolean shouldLoadDataFromRepo) {
         mTaskId = taskId;
         mTasksRepository = checkNotNull(tasksRepository);
         mAddTaskView = checkNotNull(addTaskView);
@@ -82,11 +82,11 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter,
         if (isNewTask()) {
             throw new RuntimeException("populateTask() was called but task is new.");
         }
-        mTasksRepository.getTask(mTaskId, this);
+        mTasksRepository.getFlower(mTaskId, this);
     }
 
     @Override
-    public void onTaskLoaded(Task task) {
+    public void onFlowerLoaded(Flower task) {
         // The view may not be able to handle UI updates anymore
         if (mAddTaskView.isActive()) {
             mAddTaskView.setTitle(task.getTitle());
@@ -113,13 +113,13 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter,
     }
 
     private void createTask(String title, String description, String beaconBluetoothAddress, Bitmap image) {
-        Task newTask = new Task(title, description);
+        Flower newTask = new Flower(title, description);
         newTask.setBitmap(image);
         newTask.setBeaconBluetoothAddress(beaconBluetoothAddress);
         if (newTask.isEmpty()) {
             mAddTaskView.showEmptyTaskError();
         } else {
-            mTasksRepository.saveTask(newTask);
+            mTasksRepository.saveFlower(newTask);
             mAddTaskView.showTasksList();
         }
     }
@@ -128,10 +128,10 @@ public class AddEditTaskPresenter implements AddEditTaskContract.Presenter,
         if (isNewTask()) {
             throw new RuntimeException("updateTask() was called but task is new.");
         }
-        Task task = new Task(title, description, mTaskId);
+        Flower task = new Flower(title, description, mTaskId);
         task.setBitmap(image);
         task.setBeaconBluetoothAddress(beaconBluetoothAddress);
-        mTasksRepository.saveTask(task);
+        mTasksRepository.saveFlower(task);
         mAddTaskView.showTasksList(); // After an edit, go back to the list.
     }
 }

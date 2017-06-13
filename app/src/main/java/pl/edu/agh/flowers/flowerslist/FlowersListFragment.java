@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.edu.agh.flowers.tasks;
+package pl.edu.agh.flowers.flowerslist;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -40,9 +40,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import pl.edu.agh.flowers.R;
-import pl.edu.agh.flowers.addedittask.AddEditTaskActivity;
-import pl.edu.agh.flowers.data.Task;
-import pl.edu.agh.flowers.taskdetail.TaskDetailActivity;
+import pl.edu.agh.flowers.addeditflower.AddEditFlowerActivity;
+import pl.edu.agh.flowers.data.Flower;
+import pl.edu.agh.flowers.flowerdetail.FlowerDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,11 +50,11 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Display a grid of {@link Task}s. User can choose to view all, active or completed tasks.
+ * Display a grid of {@link Flower}s. User can choose to view all, active or completed tasks.
  */
-public class TasksFragment extends Fragment implements TasksContract.View {
+public class FlowersListFragment extends Fragment implements FlowersListContract.View {
 
-    private TasksContract.Presenter mPresenter;
+    private FlowersListContract.Presenter mPresenter;
 
     private TasksAdapter mListAdapter;
 
@@ -70,18 +70,18 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     private TextView mFilteringLabelView;
 
-    public TasksFragment() {
+    public FlowersListFragment() {
         // Requires empty public constructor
     }
 
-    public static TasksFragment newInstance() {
-        return new TasksFragment();
+    public static FlowersListFragment newInstance() {
+        return new FlowersListFragment();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mListAdapter = new TasksAdapter(new ArrayList<Task>(0), mItemListener);
+        mListAdapter = new TasksAdapter(new ArrayList<Flower>(0), mItemListener);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
-    public void setPresenter(@NonNull TasksContract.Presenter presenter) {
+    public void setPresenter(@NonNull FlowersListContract.Presenter presenter) {
         mPresenter = checkNotNull(presenter);
     }
 
@@ -189,13 +189,13 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.active:
-                        mPresenter.setFiltering(TasksFilterType.ACTIVE_TASKS);
+                        mPresenter.setFiltering(FlowersFilterType.ACTIVE_TASKS);
                         break;
                     case R.id.completed:
-                        mPresenter.setFiltering(TasksFilterType.COMPLETED_TASKS);
+                        mPresenter.setFiltering(FlowersFilterType.COMPLETED_TASKS);
                         break;
                     default:
-                        mPresenter.setFiltering(TasksFilterType.ALL_TASKS);
+                        mPresenter.setFiltering(FlowersFilterType.ALL_TASKS);
                         break;
                 }
                 mPresenter.loadTasks(false);
@@ -211,17 +211,17 @@ public class TasksFragment extends Fragment implements TasksContract.View {
      */
     TaskItemListener mItemListener = new TaskItemListener() {
         @Override
-        public void onTaskClick(Task clickedTask) {
+        public void onTaskClick(Flower clickedTask) {
             mPresenter.openTaskDetails(clickedTask);
         }
 
         @Override
-        public void onCompleteTaskClick(Task completedTask) {
+        public void onCompleteTaskClick(Flower completedTask) {
             mPresenter.completeTask(completedTask);
         }
 
         @Override
-        public void onActivateTaskClick(Task activatedTask) {
+        public void onActivateTaskClick(Flower activatedTask) {
             mPresenter.activateTask(activatedTask);
         }
     };
@@ -245,7 +245,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
-    public void showTasks(List<Task> tasks) {
+    public void showTasks(List<Flower> tasks) {
         mListAdapter.replaceData(tasks);
 
         mTasksView.setVisibility(View.VISIBLE);
@@ -310,16 +310,16 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     @Override
     public void showAddTask() {
-        Intent intent = new Intent(getContext(), AddEditTaskActivity.class);
-        startActivityForResult(intent, AddEditTaskActivity.REQUEST_ADD_TASK);
+        Intent intent = new Intent(getContext(), AddEditFlowerActivity.class);
+        startActivityForResult(intent, AddEditFlowerActivity.REQUEST_ADD_TASK);
     }
 
     @Override
     public void showTaskDetailsUi(String taskId) {
         // in it's own Activity, since it makes more sense that way and it gives us the flexibility
         // to show some Intent stubbing.
-        Intent intent = new Intent(getContext(), TaskDetailActivity.class);
-        intent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, taskId);
+        Intent intent = new Intent(getContext(), FlowerDetailActivity.class);
+        intent.putExtra(FlowerDetailActivity.EXTRA_TASK_ID, taskId);
         startActivity(intent);
     }
 
@@ -354,20 +354,20 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     private static class TasksAdapter extends BaseAdapter {
 
-        private List<Task> mTasks;
+        private List<Flower> mTasks;
         private TaskItemListener mItemListener;
 
-        public TasksAdapter(List<Task> tasks, TaskItemListener itemListener) {
+        public TasksAdapter(List<Flower> tasks, TaskItemListener itemListener) {
             setList(tasks);
             mItemListener = itemListener;
         }
 
-        public void replaceData(List<Task> tasks) {
+        public void replaceData(List<Flower> tasks) {
             setList(tasks);
             notifyDataSetChanged();
         }
 
-        private void setList(List<Task> tasks) {
+        private void setList(List<Flower> tasks) {
             mTasks = checkNotNull(tasks);
         }
 
@@ -377,7 +377,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         }
 
         @Override
-        public Task getItem(int i) {
+        public Flower getItem(int i) {
             return mTasks.get(i);
         }
 
@@ -394,7 +394,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
                 rowView = inflater.inflate(R.layout.task_item, viewGroup, false);
             }
 
-            final Task task = getItem(i);
+            final Flower task = getItem(i);
 
             TextView titleTV = (TextView) rowView.findViewById(R.id.title);
             titleTV.setText(task.getTitleForList());
@@ -437,11 +437,11 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     public interface TaskItemListener {
 
-        void onTaskClick(Task clickedTask);
+        void onTaskClick(Flower clickedTask);
 
-        void onCompleteTaskClick(Task completedTask);
+        void onCompleteTaskClick(Flower completedTask);
 
-        void onActivateTaskClick(Task activatedTask);
+        void onActivateTaskClick(Flower activatedTask);
     }
 
 }

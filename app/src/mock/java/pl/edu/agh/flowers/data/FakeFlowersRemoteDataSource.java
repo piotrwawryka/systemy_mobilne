@@ -19,7 +19,8 @@ package pl.edu.agh.flowers.data;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
-import pl.edu.agh.flowers.data.source.TasksDataSource;
+import pl.edu.agh.flowers.data.source.FlowersDataSource;
+
 import com.google.common.collect.Lists;
 
 import java.util.Iterator;
@@ -29,65 +30,65 @@ import java.util.Map;
 /**
  * Implementation of a remote data source with static access to the data for easy testing.
  */
-public class FakeTasksRemoteDataSource implements TasksDataSource {
+public class FakeFlowersRemoteDataSource implements FlowersDataSource {
 
-    private static FakeTasksRemoteDataSource INSTANCE;
+    private static FakeFlowersRemoteDataSource INSTANCE;
 
-    private static final Map<String, Task> TASKS_SERVICE_DATA = new LinkedHashMap<>();
+    private static final Map<String, Flower> TASKS_SERVICE_DATA = new LinkedHashMap<>();
 
     // Prevent direct instantiation.
-    private FakeTasksRemoteDataSource() {}
+    private FakeFlowersRemoteDataSource() {}
 
-    public static FakeTasksRemoteDataSource getInstance() {
+    public static FakeFlowersRemoteDataSource getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new FakeTasksRemoteDataSource();
+            INSTANCE = new FakeFlowersRemoteDataSource();
         }
         return INSTANCE;
     }
 
     @Override
-    public void getTasks(@NonNull LoadTasksCallback callback) {
-        callback.onTasksLoaded(Lists.newArrayList(TASKS_SERVICE_DATA.values()));
+    public void getFlowers(@NonNull LoadTasksCallback callback) {
+        callback.onFlowersLoaded(Lists.newArrayList(TASKS_SERVICE_DATA.values()));
     }
 
     @Override
-    public void getTask(@NonNull String taskId, @NonNull GetTaskCallback callback) {
-        Task task = TASKS_SERVICE_DATA.get(taskId);
-        callback.onTaskLoaded(task);
+    public void getFlower(@NonNull String taskId, @NonNull GetTaskCallback callback) {
+        Flower task = TASKS_SERVICE_DATA.get(taskId);
+        callback.onFlowerLoaded(task);
     }
 
     @Override
-    public void saveTask(@NonNull Task task) {
+    public void saveFlower(@NonNull Flower task) {
         TASKS_SERVICE_DATA.put(task.getId(), task);
     }
 
     @Override
-    public void completeTask(@NonNull Task task) {
-        Task completedTask = new Task(task.getTitle(), task.getDescription(), task.getId(), true);
+    public void completeFlower(@NonNull Flower task) {
+        Flower completedTask = new Flower(task.getTitle(), task.getDescription(), task.getId(), true);
         TASKS_SERVICE_DATA.put(task.getId(), completedTask);
     }
 
     @Override
-    public void completeTask(@NonNull String taskId) {
+    public void completeFlower(@NonNull String taskId) {
         // Not required for the remote data source.
     }
 
     @Override
-    public void activateTask(@NonNull Task task) {
-        Task activeTask = new Task(task.getTitle(), task.getDescription(), task.getId());
+    public void activateFlower(@NonNull Flower task) {
+        Flower activeTask = new Flower(task.getTitle(), task.getDescription(), task.getId());
         TASKS_SERVICE_DATA.put(task.getId(), activeTask);
     }
 
     @Override
-    public void activateTask(@NonNull String taskId) {
+    public void activateFlower(@NonNull String taskId) {
         // Not required for the remote data source.
     }
 
     @Override
-    public void clearCompletedTasks() {
-        Iterator<Map.Entry<String, Task>> it = TASKS_SERVICE_DATA.entrySet().iterator();
+    public void clearCompletedFlower() {
+        Iterator<Map.Entry<String, Flower>> it = TASKS_SERVICE_DATA.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry<String, Task> entry = it.next();
+            Map.Entry<String, Flower> entry = it.next();
             if (entry.getValue().isCompleted()) {
                 it.remove();
             }
@@ -110,8 +111,8 @@ public class FakeTasksRemoteDataSource implements TasksDataSource {
     }
 
     @VisibleForTesting
-    public void addTasks(Task... tasks) {
-        for (Task task : tasks) {
+    public void addTasks(Flower... tasks) {
+        for (Flower task : tasks) {
             TASKS_SERVICE_DATA.put(task.getId(), task);
         }
     }
