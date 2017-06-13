@@ -33,6 +33,7 @@ import pl.edu.agh.flowers.R;
 import pl.edu.agh.flowers.statistics.StatisticsActivity;
 import pl.edu.agh.flowers.util.ActivityUtils;
 import pl.edu.agh.flowers.util.EspressoIdlingResource;
+import pl.edu.agh.flowers.util.SampleDataProvider;
 
 public class TasksActivity extends AppCompatActivity {
 
@@ -61,6 +62,9 @@ public class TasksActivity extends AppCompatActivity {
         if (navigationView != null) {
             setupDrawerContent(navigationView);
         }
+
+        final SampleDataProvider sampleDataProvider = new SampleDataProvider(Injection.provideTasksRepository(getApplicationContext()));
+        sampleDataProvider.fulfillDbWith5SampleFlowers(getResources());
 
         TasksFragment tasksFragment =
                 (TasksFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);

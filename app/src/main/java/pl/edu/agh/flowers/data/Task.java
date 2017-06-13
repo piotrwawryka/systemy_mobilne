@@ -55,6 +55,11 @@ public final class Task {
         this(title, description, UUID.randomUUID().toString(), false);
     }
 
+    public Task(@Nullable String title, @Nullable String description, Bitmap bitmap) {
+        this(title, description, UUID.randomUUID().toString(), false);
+        this.bitmap = bitmap;
+    }
+
     /**
      * Use this constructor to create an active Task if the Task already has an id (copy of another
      * Task).

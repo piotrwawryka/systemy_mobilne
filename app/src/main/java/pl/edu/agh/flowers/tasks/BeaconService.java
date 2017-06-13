@@ -8,6 +8,8 @@ import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.common.base.Objects;
+
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
@@ -82,7 +84,7 @@ public class BeaconService extends Service implements BeaconConsumer {
     private List<Task> tasksFor(List<Task> tasks, String bluetoothAddress) {
         final ArrayList<Task> filteredTasks = new ArrayList<>();
         for (Task task : tasks) {
-            if (task.getBeaconBluetoothAddress().equals(bluetoothAddress))
+            if (Objects.equal(task.getBeaconBluetoothAddress(), bluetoothAddress))
                 filteredTasks.add(task);
         }
         return filteredTasks;
