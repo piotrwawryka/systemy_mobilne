@@ -37,6 +37,8 @@ public interface AddEditFlowerContract {
         void setDescription(String description);
 
         boolean isActive();
+
+        void setBitmap(Bitmap bitmap);
     }
 
     interface Presenter extends BasePresenter {

@@ -26,6 +26,7 @@ import com.google.common.base.Strings;
 import java.util.UUID;
 
 public final class Flower {
+    public static String MISSING_BEACON = "none";
 
     @NonNull
     private final String mId;
@@ -40,7 +41,7 @@ public final class Flower {
 
     private Bitmap bitmap;
 
-    private String mBeaconBluetoothAddress;
+    private String mBeaconBluetoothAddress = MISSING_BEACON;
 
     public Flower(@Nullable String title, @Nullable String description) {
         this(title, description, UUID.randomUUID().toString(), false);

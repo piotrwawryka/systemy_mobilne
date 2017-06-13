@@ -91,6 +91,7 @@ public class AddEditFlowerPresenter implements AddEditFlowerContract.Presenter,
         if (mAddTaskView.isActive()) {
             mAddTaskView.setTitle(task.getTitle());
             mAddTaskView.setDescription(task.getDescription());
+            mAddTaskView.setBitmap(task.getBitmap());
         }
         mIsDataMissing = false;
     }

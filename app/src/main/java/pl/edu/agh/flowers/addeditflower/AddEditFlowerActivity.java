@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import pl.edu.agh.flowers.data.Flower;
 import pl.edu.agh.flowers.data.Injection;
 import pl.edu.agh.flowers.R;
 import pl.edu.agh.flowers.util.ActivityUtils;
@@ -47,7 +48,7 @@ import pl.edu.agh.flowers.util.EspressoIdlingResource;
  */
 public class AddEditFlowerActivity extends AppCompatActivity implements BeaconConsumer {
 
-    private static final String TAG = "AddEditTaskActivity";
+    private static final String TAG = "AddEditFlowerActivity";
 
     public static final int REQUEST_ADD_TASK = 1;
 
@@ -115,7 +116,9 @@ public class AddEditFlowerActivity extends AppCompatActivity implements BeaconCo
     }
 
     private void setupBeacons() {
-        dataAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, new ArrayList<>());
+        final ArrayList<String> beacons = new ArrayList<>();
+        beacons.add(Flower.MISSING_BEACON);
+        dataAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, beacons);
         beaconIds = new HashSet<>();
 
         beaconManager = BeaconManager.getInstanceForApplication(this);

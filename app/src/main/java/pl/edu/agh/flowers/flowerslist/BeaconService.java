@@ -51,6 +51,12 @@ public class BeaconService extends Service implements BeaconConsumer {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        beaconManager.unbind(this);
+    }
+
+    @Override
     public void onBeaconServiceConnect() {
         beaconManager.addRangeNotifier((beacons, region) -> {
             flowersRepository.getFlowers(new FlowersDataSource.LoadTasksCallback() {

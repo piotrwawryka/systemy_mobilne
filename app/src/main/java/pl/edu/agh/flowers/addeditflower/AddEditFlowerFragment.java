@@ -93,7 +93,7 @@ public class AddEditFlowerFragment extends Fragment implements AddEditFlowerCont
                 (FloatingActionButton) getActivity().findViewById(R.id.fab_edit_task_done);
         fab.setImageResource(R.drawable.ic_done);
         fab.setOnClickListener(v -> {
-            Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+            final Bitmap bitmap = imageView.getDrawable() != null ? ((BitmapDrawable)imageView.getDrawable()).getBitmap() : null;
             final String beaconId = beaconSpinner.getSelectedItem() != null ? beaconSpinner.getSelectedItem().toString() : null;
             mPresenter.saveTask(mTitle.getText().toString(), mDescription.getText().toString(), beaconId, bitmap);
         });
@@ -139,7 +139,6 @@ public class AddEditFlowerFragment extends Fragment implements AddEditFlowerCont
         startActivityForResult(intent, GALLERY_CODE);
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -174,6 +173,11 @@ public class AddEditFlowerFragment extends Fragment implements AddEditFlowerCont
     @Override
     public boolean isActive() {
         return isAdded();
+    }
+
+    @Override
+    public void setBitmap(Bitmap bitmap) {
+        imageView.setImageBitmap(bitmap);
     }
 
 }
