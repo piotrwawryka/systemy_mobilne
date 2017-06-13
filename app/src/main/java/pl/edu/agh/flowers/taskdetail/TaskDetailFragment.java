@@ -115,18 +115,6 @@ public class TaskDetailFragment extends Fragment implements TaskDetailContract.V
         // Bind chart
         lineChart = (LineChart) root.findViewById(R.id.chart);
 
-        // Setup helper add data button
-        FloatingActionButton addFab =
-                (FloatingActionButton) getActivity().findViewById(R.id.fab_add_task_data);
-        addFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                long timeStamp = System.currentTimeMillis();
-                double value = new Random().nextDouble();
-                addTimeDataElement(timeStamp, value);
-            }
-        });
-
         loadTimeData();
 
         return root;
